@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Designing a Safe &amp; Engaging Community Experience for FemEntity - Ilona Sereda</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #1E1E1E;
+      color: #F3EFE6;
+      line-height: 1.7;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    a { text-decoration: none; color: inherit; cursor: none; }
+    button { cursor: none; font-family: inherit; border: none; background: none; }
+
+    :root {
+      --red: #C33C20;
+      --green: #275441;
+      --dark: #1E1E1E;
+      --cream: #F3EFE6;
+      --cream-light: #F2EEE6;
+      --white: #FBFAFA;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 9999;
+      background: transparent;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--red);
+      transition: width 0.1s ease-out, background-color 0.3s ease;
+    }
+
+    /* ===== КАСТОМНИЙ КУРСОР ===== */
+    .custom-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 20px; height: 20px;
+      background-color: var(--red);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+      mix-blend-mode: difference; 
+    }
+    .custom-cursor.hovering {
+      width: 50px; height: 50px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 3rem;
+      left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      pointer-events: none;
+    }
+    .nav-logo {
+      position: absolute;
+      left: 2rem;
+      top: -100vh; 
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cream);
+      pointer-events: auto;
+      z-index: 2;
+    }
+    
+    .nav-pill-wrap {
+      position: absolute;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+    
+    .nav-pill {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      padding: 0.9rem 2rem;
+      pointer-events: auto;
+    }
+    .nav-pill::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: rgba(30, 30, 30, 0.6);
+      border: 1px solid rgba(243, 239, 230, 0.2);
+      border-radius: 9999px;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 20px; height: 20px;
+      background-color: var(--green);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: width 0.3s, height 0.3s, opacity 0.2s;
+    }
+    body.nav-hover .nav-cursor { width: 60px; height: 60px; opacity: 1; }
+    body.nav-hover .custom-cursor { opacity: 0; }
+    .custom-cursor { transition: width 0.3s, height 0.3s, opacity 0.2s; }
+    
+    .nav-link {
+      position: relative;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0;
+      color: var(--cream);
+      z-index: 2;
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 1.5rem;
+      background: rgba(243, 239, 230, 0.2);
+      margin: 0;
+    }
+
+    /* ===== CASE STUDY LAYOUT ===== */
+    /* Standard Dark Block */
+    .chapter-dark {
+      background: var(--dark);
+      color: #F3EFE6;
+      padding: 6rem 1.5rem;
+    }
+    /* Standard Cream Block */
+    .chapter-cream {
+      background: var(--cream);
+      color: var(--dark);
+      padding: 6rem 1.5rem;
+    }
+
+    /* Shared inner container for text (800px) */
+    .text-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    /* Shared inner container for large images (1200px) */
+    .image-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Case Title Section */
+    .case-header {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 14rem 1.5rem 2rem;
+    }
+
+    .case-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+      color: var(--cream-light);
+    }
+    
+    .case-subtitle {
+      font-size: clamp(1.15rem, 2.5vw, 1.35rem);
+      color: #d0d0d8; 
+      opacity: 0.7; 
+      margin-bottom: 3rem;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .case-description {
+      font-size: 1.1rem;
+      color: #d0d0d8;
+      margin-bottom: 3rem;
+      line-height: 1.8;
+    }
+
+    .case-meta {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      row-gap: 0.75rem;
+      column-gap: 1.5rem;
+      margin-bottom: 0; 
+    }
+    .case-meta dt {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      font-weight: 400;
+    }
+    .case-meta dd {
+      font-size: 0.95rem;
+      color: #d0d0d8;
+      line-height: 1.6;
+    }
+
+    /* Section Typography */
+    .case-section {
+      margin-bottom: 3rem;
+    }
+    .case-section:last-child {
+      margin-bottom: 0;
+    }
+    .case-section h2 {
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: var(--cream-light);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .chapter-cream .case-section h2 {
+      color: var(--dark);
+    }
+    
+    .case-section h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .chapter-cream .case-section h3 {
+      color: var(--dark);
+    }
+
+    .case-section p {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      margin-bottom: 1.25rem;
+      line-height: 1.8;
+    }
+    .chapter-cream .case-section p {
+      color: #333;
+    }
+    
+    .case-section ul {
+      list-style: none;
+      margin: 1rem 0 1.5rem 0;
+      padding: 0;
+    }
+    .case-section ul li {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      padding-left: 1.5rem;
+      position: relative;
+      margin-bottom: 0.6rem;
+      line-height: 1.7;
+    }
+    .chapter-cream .case-section ul li {
+      color: #333;
+    }
+    .case-section ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-weight: bold;
+    }
+    .case-section strong {
+      color: var(--cream-light);
+      font-weight: 600;
+    }
+    .chapter-cream .case-section strong {
+      color: var(--dark);
+    }
+
+    /* Image block inside chapters */
+    .chapter-image {
+      margin-top: 3rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chapter-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 0; 
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .chapter-image:hover img {
+      transform: scale(1.02);
+    }
+    .image-caption {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      text-align: left; 
+      margin-top: 1rem;
+      line-height: 1.5;
+      padding: 0 1rem;
+    }
+    .chapter-cream .image-caption {
+      color: #666;
+    }
+
+    /* Hero Image */
+    .hero-image-parallax {
+      width: 100%;
+      height: 105vh; 
+      position: relative;
+      overflow: hidden;
+      padding: 1.5rem;
+      background: var(--dark);
+    }
+    @media (min-width: 768px) {
+      .hero-image-parallax { padding: 3rem; }
+    }
+    .hero-image-parallax .img-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .hero-image-parallax:hover .img-wrapper {
+      transform: scale(1.02);
+    }
+    .hero-image-parallax .parallax-img {
+      position: absolute;
+      top: -15%;
+      left: 0;
+      width: 100%;
+      height: 130%;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+    }
+
+    /* Specific Layouts (Impact) */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    @media (min-width: 640px) {
+      .impact-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .impact-card {
+      padding: 1.5rem;
+      border: 1px solid rgba(243, 239, 230, 0.15);
+      background: transparent;
+    }
+    .chapter-cream .impact-card {
+      border-color: rgba(30, 30, 30, 0.15);
+    }
+    .impact-card .num {
+      font-size: 2rem;
+      color: var(--green);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .impact-card h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-cream .impact-card h4 {
+      color: var(--dark);
+    }
+    .impact-card p {
+      font-size: 0.95rem;
+      color: #d0d0d8;
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+    .chapter-cream .impact-card p {
+      color: #333;
+    }
+
+    /* Before / After */
+    .case-image-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 2rem auto 1rem;
+      max-width: 1200px;
+      padding: 0 1rem;
+    }
+    .case-image-pair .case-image {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .case-image-pair .case-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 0;
+      transition: transform 0.5s ease;
+    }
+    .case-image-pair .case-image:hover img {
+      transform: scale(1.02);
+    }
+    .case-image-pair .image-label {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      text-align: center;
+      margin-top: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+    @media (max-width: 640px) {
+      .case-image-pair {
+        grid-template-columns: 1fr;
+      }
+    }
+    .image-pair-caption {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      text-align: center; 
+      margin-top: 0;
+      margin-bottom: 4rem;
+      padding: 0 1rem;
+      line-height: 1.5;
+    }
+
+    /* Status Tag (Оновлений) */
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0;
+      color: var(--cream-light); /* Кремовий текст */
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .status-tag .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4ade80; /* Світліший зелений */
+      animation: statusPulse 1.5s infinite;
+    }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* ===== NEXT CASES & BACK TO TOP ===== */
+    .bottom-cream-wrapper {
+      background: var(--white); /* Білий фон */
+      padding: 8rem 1.5rem 6rem;
+      color: var(--dark);
+    }
+    
+    .next-cases-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .bottom-cream-wrapper h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    
+    .next-cases-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-bottom: 6rem;
+    }
+    @media (min-width: 768px) {
+      .next-cases-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .case-link {
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .case-link-img-wrapper {
+      width: 100%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      background: transparent; 
+    }
+    .case-link-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .case-link:hover .case-link-img-wrapper img {
+      transform: scale(1.05);
+    }
+    
+    .case-link-content {
+      padding: 1.5rem 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .case-link-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--dark); /* Темний для білого фону */
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+    
+    .case-link:hover .case-link-title {
+      color: var(--green);
+    }
+    
+    .case-link-sub {
+      font-size: 0.8rem;
+      color: #666; /* Темно-сірий для білого фону */
+      margin-top: auto;
+    }
+
+    .back-to-top-container {
+      text-align: center;
+    }
+    
+    .back-to-top {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--dark); /* Темний для білого фону */
+      transition: color 0.3s;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .back-to-top:hover {
+      color: var(--green);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 6rem 1.5rem 2rem;
+      background: var(--dark);
+      color: var(--cream);
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .footer-top {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .footer-top {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    .email-link {
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: color 0.3s;
+    }
+    .email-link:hover {
+      color: var(--red);
+    }
+    .footer-thanks {
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      font-weight: 400;
+    }
+    .footer-middle {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .footer-middle {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    footer .socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+    }
+    footer .socials a:hover {
+      color: var(--red);
+    }
+    footer .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    footer .status .dot {
+      width: 8px;
+      height: 8px;
+      background: #3DA875;
+      border-radius: 50%;
+      animation: blinkGreen 1.5s infinite;
+    }
+    @keyframes blinkGreen {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .footer-bottom {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(243, 239, 230, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: rgba(243, 239, 230, 0.5);
+    }
+    @media (min-width: 768px) {
+      .footer-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    /* ===== АНІМАЦІЇ ===== */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="custom-cursor" id="cursor"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-cursor" id="navCursor"></div>
+    <a href="index.html" class="nav-logo">ILONA SEREDA</a>
+    <div class="nav-pill-wrap">
+      <div class="nav-pill">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="index.html#work" class="nav-link">Work</a>
+        <a href="about.html" class="nav-link">About</a>
+        <div class="nav-divider"></div>
+        <a href="mailto:ilonaseredawork@gmail.com" class="nav-link">Say hi ↗</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HEADER ===== -->
+  <header class="chapter-dark" style="padding-bottom: 0;">
+    <div class="case-header">
+      <h1 class="case-title fade-in-up">Designing a Safe &amp; Engaging Community Experience for FemEntity</h1>
+      <p class="case-subtitle fade-in-up">A 12-week project building a practitioner-led Community Forum with controlled anonymity</p>
+      <p class="case-description fade-in-up">Designing and prototyping a Community Forum feature for an AI-powered wellness platform — guiding a team of UX/UI student interns from research to high-fidelity designs ready for developer handoff.</p>
+
+      <dl class="case-meta fade-in-up">
+        <dt>Role</dt>
+        <dd>Lead Product Designer</dd>
+        <dt>Duration</dt>
+        <dd>September – December 2025 (12 weeks)</dd>
+        <dt>Team</dt>
+        <dd>5 UX/UI student interns, 1 UX/UI designer, CEO, Marketing Manager</dd>
+        <dt>Tools</dt>
+        <dd>Figma, Miro, Whimsical, Notion, Google Workspace</dd>
+      </dl>
+    </div>
+  </header>
+
+  <!-- ===== HERO IMAGE ===== -->
+  <div class="hero-image-parallax fade-in-up" style="margin-bottom: 0;">
+    <div class="img-wrapper">
+      <div class="parallax-img" style="background-image: url('images/community/hero.webp');"></div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER: PROJECT OVERVIEW ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Project Overview</h2>
+        <p>FemEntity is an AI-powered wellness platform connecting users with licensed practitioners. The goal of this project was to design and prototype a Community Forum feature to serve as a central hub for peer support, resource sharing, and practitioner engagement within a trusted, wellness-focused ecosystem.</p>
+        <p>As the Lead Product Designer, I led a 12-week project building Community Forum. My job was to guide a group of UX/UI students through the professional design process. We started with basic competitor research and finished with high-quality designs that were ready for developers to build.</p>
+      </div>
+
+      <div class="case-section">
+        <h2>Key insight</h2>
+        <p>Our thematic analysis of 20 client and practitioner calls revealed that users didn't want a fully open peer-to-peer forum — they valued practitioner-led content and controlled anonymity more.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/community/preparation.webp" alt="Notion page — Community Forum project overview" loading="lazy" />
+        <p class="image-caption">The dedicated Notion page, giving students a clear view of the product vision and the three-month plan.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: PREPARATION & PHASE 1 ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Preparation</h2>
+        <p>Before student onboarding, I gathered all relevant documentation and existing research, working closely with the UX/UI designer, aligned with the CEO on the vision and priorities for the Community Forum, and created a dedicated Notion page to help students understand the product vision and the plan for the next three months.</p>
+      </div>
+
+      <div class="case-section">
+        <h2>Phase 1: Research &amp; Discovery (Weeks 1–2)</h2>
+        <p>We began with thorough research to understand user needs, behaviors, and the competitive landscape. I guided the team through:</p>
+        <ul>
+          <li>Competitive analysis of 5 healthcare and community platforms</li>
+          <li>Thematic analysis of 20 client and practitioner demo calls to uncover trust, privacy, and engagement patterns</li>
+        </ul>
+        <p>This research revealed that users valued practitioner-led content and controlled anonymity more than fully open peer-to-peer forums.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/community/phase-1.webp" alt="Research phase — Miro board and Thematic Analysis Report" loading="lazy" />
+        <p class="image-caption">Research phase: the Miro board and thematic analysis report that surfaced trust, privacy, and engagement patterns.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: PHASE 2 ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Phase 2: Information Architecture (Weeks 3–6)</h2>
+        <p>To translate research insights into a functional structure, I employed several key methodologies. First, working with the UX/UI designer, I created a draft feature list with hypotheses based on MVP goals. I then presented it to the students and they worked on feature list ideation based on their research. We also included our CEO and Marketing Manager in the discussion.</p>
+
+        <h3>MindMap Workshop</h3>
+        <p>To add more interaction, encourage collaboration and to ideate better, I suggested running a MindMapping workshop with students where we discussed in detail Community Forum categories and structure, ensuring the architecture reflected the research findings. Based on our MindMapping session results, we mapped primary user flows.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/community/phase-2a.webp" alt="MindMapping workshop with students" loading="lazy" />
+        <p class="image-caption">The MindMapping workshop: mapping Community Forum categories and structure as a team.</p>
+      </div>
+      <div class="chapter-image">
+        <img src="images/community/phase-2b.webp" alt="Feature list and IA structure" loading="lazy" />
+        <p class="image-caption">The feature list and IA structure, shaped together with the CEO and Marketing Manager.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: PHASE 3 & MEASUREMENT ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Phase 3: Prototyping &amp; Iteration (Weeks 7–12)</h2>
+        <p>We translated the architecture into tangible designs through iterative prototyping, using the FemEntity design system and reusing existing design patterns. Each week we had discussions and reviews, focusing on interaction design, visual hierarchy, and usability. This phase included creation of mid-fidelity and high-fidelity wireframes.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/community/phase-3.webp" alt="Mid-fidelity and high-fidelity wireframes" loading="lazy" />
+        <p class="image-caption">Mid-fidelity and high-fidelity wireframes, refined through weekly reviews.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: MEASUREMENT & SUMMARY ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Measurement plan</h2>
+        <div class="status-tag">
+          <span class="dot"></span>
+          Scheduled for release after the MVP launch
+        </div>
+        <p>The Community Forum is scheduled for release after the MVP launch. To evaluate whether it achieves its goals — a safe, practitioner-led space with controlled anonymity — we defined four metrics for post-launch tracking.</p>
+
+        <h3>Engagement</h3>
+        <ul>
+          <li><strong>Participation rate</strong>: to understand the percentage of new members who post, comment, or react within their first week.</li>
+          <li><strong>Anonymity usage rate</strong>: to know the percentage of posts using the anonymity toggle, to validate the research insight about controlled anonymity.</li>
+        </ul>
+
+        <h3>Safety &amp; trust</h3>
+        <ul>
+          <li><strong>Trust &amp; psychological safety</strong>: members' self-reported sense of safety when participating, on a scale from 1 to 5.</li>
+        </ul>
+      </div>
+
+      <div class="case-section">
+        <h2>Summary</h2>
+        <p>This project was not only about designing a feature — it was an exercise in adaptive mentorship and clear communication. Working with students at different skill levels taught me to adjust my guidance in real-time. While I maintained non-negotiable quality standards, I became more flexible with process execution. This experience fundamentally improved my ability to lead diverse teams, articulate design rationale, and create a place that helps others succeed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NEXT CASES & BACK TO TOP ===== -->
+  <div class="bottom-cream-wrapper fade-in-up">
+    <div class="next-cases-inner">
+      <h3>Next cases</h3>
+      <div class="next-cases-grid">
+        
+        <a href="case-wellness-onboarding.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case1-cover.webp" alt="Wellness Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Building Trust Early in a Wellness Onboarding</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+        
+        <a href="case-hrms-redesign.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case2-cover.webp" alt="HRMS Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">From a Browser Extension to an HRMS: Helping Recruiters Work Faster</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+
+        <a href="case-traxr.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case3-cover.webp" alt="Traxr Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Traxr: From a Cluttered Backlink Tool to a Clearer Decision-Making Workspace</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+
+      </div>
+      
+      <div class="back-to-top-container">
+        <a href="#" class="back-to-top" id="backToTop">
+          Back to the top
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <a href="mailto:ilonaseredawork@gmail.com" class="email-link">ilonaseredawork@gmail.com</a>
+        <div class="footer-thanks">Dyakuyu (Дякую) which means "Thank you" in Ukrainian</div>
+      </div>
+
+      <div class="footer-middle">
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/ilonasereda/" target="_blank">LinkedIn</a>
+          <a href="https://www.behance.net/ilonasereda" target="_blank">Behance</a>
+          <a href="https://dribbble.com/ilonasereda" target="_blank">Dribbble</a>
+          <a href="https://ixdf.org/members/ilona-3?r=ilona-3" target="_blank">IxDF</a>
+        </div>
+        
+        <div class="status">
+          <span class="dot"></span>
+          Available for projects
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>Designed and built with love by Ilona Sereda</div>
+        <div>Portugal, 2026</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== PROGRESS BAR & COLOR CHANGE =====
+    const progressBar = document.getElementById('progressBar');
+    
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      progressBar.style.width = scrolled + "%";
+    });
+
+    // ===== КАСТОМНИЙ КУРСОР =====
+    const cursor = document.getElementById('cursor');
+    const navCursor = document.getElementById('navCursor');
+    let mouseX = 0, mouseY = 0;
+    let cursorX = 0, cursorY = 0;
+    const speed = 0.15;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+      cursorX += (mouseX - cursorX) * speed;
+      cursorY += (mouseY - cursorY) * speed;
+      const t = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+      cursor.style.transform = t;
+      navCursor.style.transform = t;
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('.nav-logo, .nav-link').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('nav-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('nav-hover'));
+    });
+
+    document.querySelectorAll('a, button, .work-card, .shape').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    // ===== GSAP АНІМАЦІЇ =====
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray(".fade-in-up").forEach(function(el) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" }
+        }
+      );
+    });
+
+    // Паралакс для Hero
+    gsap.fromTo(".hero-image-parallax .parallax-img", 
+      { y: "-10%" },
+      {
+        y: "10%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero-image-parallax",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      }
+    );
+
+    // Smooth scroll for Back to Top
+    document.getElementById('backToTop').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

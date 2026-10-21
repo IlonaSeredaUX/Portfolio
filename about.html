@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Ilona Sereda</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #1E1E1E;
+      color: #F3EFE6;
+      line-height: 1.7;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    a { text-decoration: none; color: inherit; cursor: none; }
+    button { cursor: none; font-family: inherit; border: none; background: none; }
+
+    :root {
+      --red: #C33C20;
+      --green: #275441;
+      --dark: #1E1E1E;
+      --cream: #F3EFE6;
+      --cream-light: #F2EEE6;
+      --white: #FBFAFA;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 9999;
+      background: transparent;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--red);
+      transition: width 0.1s ease-out, background-color 0.3s ease;
+    }
+
+    /* ===== КАСТОМНИЙ КУРСОР ===== */
+    .custom-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 20px; height: 20px;
+      background-color: var(--red);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+      mix-blend-mode: difference; 
+    }
+    .custom-cursor.hovering {
+      width: 50px; height: 50px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 3rem;
+      left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      pointer-events: none;
+    }
+    .nav-logo {
+      position: absolute;
+      left: 2rem;
+      top: -100vh; 
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cream);
+      pointer-events: auto;
+      z-index: 2;
+    }
+    
+    .nav-pill-wrap {
+      position: absolute;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+    
+    .nav-pill {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      padding: 0.9rem 2rem;
+      pointer-events: auto;
+    }
+    .nav-pill::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: rgba(30, 30, 30, 0.6);
+      border: 1px solid rgba(243, 239, 230, 0.2);
+      border-radius: 9999px;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 20px; height: 20px;
+      background-color: var(--green);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: width 0.3s, height 0.3s, opacity 0.2s;
+    }
+    body.nav-hover .nav-cursor { width: 60px; height: 60px; opacity: 1; }
+    body.nav-hover .custom-cursor { opacity: 0; }
+    .custom-cursor { transition: width 0.3s, height 0.3s, opacity 0.2s; }
+    
+    .nav-link {
+      position: relative;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0;
+      color: var(--cream);
+      z-index: 2;
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 1.5rem;
+      background: rgba(243, 239, 230, 0.2);
+      margin: 0;
+    }
+
+    /* ===== ABOUT PAGE LAYOUT ===== */
+    .about-wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+    .about-wrapper--wide {
+      padding: 14rem 1.5rem 3rem;
+    }
+
+    /* Hero */
+    .about-hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    @media (min-width: 900px) {
+      .about-hero { grid-template-columns: minmax(0, 1fr) 200px; gap: 3rem; }
+    }
+    .about-lead {
+      font-size: clamp(1.25rem, 2vw, 1.55rem);
+      color: #d0d0d8;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    .about-body {
+      text-align: left;
+      margin: 0 0 1rem;
+    }
+    .about-body p {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      line-height: 1.8;
+      margin-bottom: 1.15rem;
+    }
+
+    /* Hero Shape (Коло) */
+    .about-shapes {
+      position: relative;
+      width: 380px;
+      max-width: 100%;
+      height: 340px;
+      justify-self: start;
+    }
+    @media (min-width: 900px) {
+      .about-shapes { margin-right: -180px; }
+    }
+    .shape-photo {
+      position: absolute;
+      overflow: hidden;
+      background: #2E2A28;
+      transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    .shape-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .shape-circle {
+      left: 40px; top: 20px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+    }
+    .shape-circle:hover { transform: scale(1.04); }
+
+    /* Середній блок */
+    .about-middle {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    @media (min-width: 900px) {
+      .about-middle { grid-template-columns: 200px minmax(0, 1fr); gap: 3rem; }
+    }
+    .about-figure {
+      position: relative;
+      width: 380px;
+      max-width: 100%;
+      height: 360px;
+    }
+    @media (min-width: 900px) {
+      .about-figure { margin-left: -180px; }
+    }
+    
+    /* Анімація обертання за годинниковою стрілкою (дуже повільно) */
+    .figure-rot {
+      position: absolute;
+      left: 65px; top: 25px;
+      width: 250px;
+      transform: rotate(-23deg);
+      transform-origin: 125px 125px;
+      transition: transform 10s linear; /* 10 секунд на повний оберт */
+    }
+    .figure-rot:hover { 
+      transform: rotate(337deg); /* -23 + 360 (повний оберт за годинниковою) */
+    }
+    .figure-rot .shape-square {
+      position: relative;
+      width: 250px; height: 250px;
+    }
+    
+    /* Підпис */
+    .figure-rot figcaption {
+      margin-top: 0.7rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: rgba(243, 239, 230, 0.6);
+    }
+    
+    @media (max-width: 640px) {
+      .about-shapes { height: 300px; }
+      .shape-circle { left: 40px; top: 10px; width: 260px; height: 260px; }
+      .about-figure { height: 340px; }
+    }
+
+    /* Кнопка Back to the top */
+    .back-to-top-wrap {
+      text-align: center;
+      padding: 5rem 0 1rem;
+    }
+    .back-to-top {
+      display: inline-block;
+      font-size: clamp(0.65rem, 1.2vw, 0.9rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--cream);
+      padding-bottom: 0.15em;
+      border-bottom: 1.5px solid var(--cream);
+      transition: color 0.25s, border-color 0.25s;
+    }
+    .back-to-top:hover { color: var(--red); border-color: var(--red); }
+
+    .about-photo {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: #14141e;
+      margin-bottom: 2.5rem;
+      border: 1px solid rgba(243, 239, 230, 0.1);
+    }
+    .about-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      display: block;
+      transition: transform 0.5s;
+    }
+    .about-photo:hover img {
+      transform: scale(1.02);
+    }
+
+    .about-intro h1 {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--cream-light);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+    .about-intro p {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      margin-bottom: 1.15rem;
+      line-height: 1.8;
+    }
+    .about-intro strong {
+      color: var(--cream-light);
+      font-weight: 600;
+    }
+
+    /* Inline text links */
+    .text-link {
+      font-weight: 600;
+      color: var(--cream-light);
+      transition: color 0.25s;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .text-link:hover {
+      color: var(--white);
+    }
+
+    /* ---- SECTIONS (Experience / Education / Hobbies) ---- */
+    .about-section {
+      padding-top: 3rem;
+      margin-top: 3rem;
+      border-top: 1px solid rgba(243, 239, 230, 0.15);
+    }
+    .about-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--cream-light);
+      margin-bottom: 1.75rem;
+      letter-spacing: -0.01em;
+    }
+    .about-section p {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    /* Timeline rows */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+      padding: 0.75rem 0;
+      transition: all 0.25s;
+      position: relative;
+    }
+    @media (min-width: 640px) {
+      .timeline-row {
+        grid-template-columns: 120px 1fr;
+        gap: 1.5rem;
+        align-items: baseline;
+      }
+    }
+    .timeline-row:hover {
+      transform: translateX(4px);
+    }
+    .timeline-row:hover .timeline-main {
+      color: var(--cream-light);
+    }
+    .timeline-date {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+    }
+    .timeline-main {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      transition: color 0.25s;
+      line-height: 1.5;
+    }
+    .timeline-main strong {
+      color: var(--cream-light);
+      font-weight: 600;
+    }
+
+    /* TIMELINE LINK STYLE */
+    .link-accent {
+      cursor: pointer;
+      color: var(--cream-light);
+      transition: color 0.25s;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(243, 239, 230, 0.3);
+    }
+    .link-accent .ext-icon {
+      display: inline-block;
+      font-size: 0.85em;
+      color: var(--cream-light);
+      margin-left: 0.25em;
+      opacity: 0;
+      transform: translateX(-2px);
+      transition: opacity 0.25s, transform 0.25s;
+      vertical-align: 0.05em;
+      line-height: 1;
+    }
+    .link-accent:hover {
+      color: var(--white);
+      text-decoration-color: var(--white);
+    }
+    .link-accent:hover .ext-icon {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .timeline-link {
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ===== ABOUT — TWO PHOTOS ===== */
+    .about-photos-section {
+      margin-top: 2rem; 
+    }
+
+    .about-photos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .about-photos {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+
+    .about-photo-small {
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      background: #14141e;
+      border: 1px solid rgba(243, 239, 230, 0.1);
+    }
+
+    .about-photo-small img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s;
+    }
+    .about-photo-small:hover img {
+      transform: scale(1.05);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 6rem 1.5rem 2rem;
+      background: var(--dark);
+      color: var(--cream);
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .footer-top {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .footer-top {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    .email-link {
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: color 0.3s;
+    }
+    .email-link:hover {
+      color: var(--red);
+    }
+    .footer-thanks {
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      font-weight: 400;
+    }
+    .footer-middle {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .footer-middle {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    footer .socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+    }
+    footer .socials a:hover {
+      color: var(--red);
+    }
+    footer .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    footer .status .dot {
+      width: 8px;
+      height: 8px;
+      background: #3DA875;
+      border-radius: 50%;
+      animation: blinkGreen 1.5s infinite;
+    }
+    @keyframes blinkGreen {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .footer-bottom {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(243, 239, 230, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: rgba(243, 239, 230, 0.5);
+    }
+    @media (min-width: 768px) {
+      .footer-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    /* ===== АНІМАЦІЇ ===== */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="custom-cursor" id="cursor"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-cursor" id="navCursor"></div>
+    <a href="index.html" class="nav-logo">ILONA SEREDA</a>
+    <div class="nav-pill-wrap">
+      <div class="nav-pill">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="index.html#work" class="nav-link">Work</a>
+        <a href="about.html" class="nav-link active">About</a>
+        <div class="nav-divider"></div>
+        <a href="mailto:ilonaseredawork@gmail.com" class="nav-link">Say hi ↗</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== ABOUT (DARK BACKGROUND) ===== -->
+  <div class="about-wrapper about-wrapper--wide">
+    <!-- HERO -->
+    <section class="about-hero fade-in-up">
+      <div class="about-intro">
+        <h1>Hi, I'm Ilona, a Product and UX/UI Designer</h1>
+        <p class="about-lead">Originally from Ukraine (Dnipro, Korsun-Shevchenkivskyi, Kyiv), I lived in Montreal, Canada (Oui, je parle français), and now I live in Portugal (Estou a aprender português).</p>
+      </div>
+      <div class="about-shapes">
+        <div class="shape-photo shape-circle">
+          <img src="images/about/photo.jpg" alt="Ilona Sereda" />
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <article class="about-wrapper">
+
+    <!-- INTRO TEXT -->
+    <section class="about-middle fade-in-up">
+      <figure class="about-figure">
+        <div class="figure-rot">
+          <div class="shape-photo shape-square">
+            <img src="images/about/little-me.jpg" alt="" onerror="this.style.display='none'" />
+          </div>
+          <figcaption>Little me and my baby brother ✨</figcaption>
+        </div>
+      </figure>
+      <div class="about-body">
+      <p>Currently I'm building AI-powered wellness app <a href="https://fementity.ca/" target="_blank" rel="noopener" class="text-link">FemEntity</a>. In my work, I'm focusing on bridging the gap between user and business, while facilitating efficient workflows and cross-team collaboration.</p>
+      <p>I work remotely from Portugal (UTC+0) and collaborate comfortably across European and Eastern Time (ET) time zones.</p>
+      <p>I have hands-on experience across end-to-end design processes, from research and problem framing to redesign initiatives and design system development.</p>
+      <p>Always open to meaningful collaborations — <a href="https://www.linkedin.com/in/ilonasereda/" target="_blank" rel="noopener" class="text-link">let's connect on Linkedin</a>!</p>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="about-section fade-in-up">
+      <h2>Experience</h2>
+      <div class="timeline">
+        <div class="timeline-row">
+          <div class="timeline-date">2025 — Now</div>
+          <div class="timeline-main"><strong>Product Designer</strong> at <a href="https://fementity.ca/" target="_blank" rel="noopener" class="link-accent">FemEntity<span class="ext-icon" aria-hidden="true">↗</span></a></div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-date">2023 — Now</div>
+          <div class="timeline-main"><strong>Freelance</strong> Consulting and Independent Projects</div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-date">2022 — 2023</div>
+          <div class="timeline-main"><strong>UX/UI Designer</strong> at <a href="http://tsimagine.com/" target="_blank" rel="noopener" class="link-accent">TS Imagine<span class="ext-icon" aria-hidden="true">↗</span></a></div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-date">2021 — 2022</div>
+          <div class="timeline-main"><strong>UX/UI Designer</strong> at <a href="https://www.codebridge.tech/" target="_blank" rel="noopener" class="link-accent">Codebridge<span class="ext-icon" aria-hidden="true">↗</span></a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section class="about-section fade-in-up">
+      <h2>Education</h2>
+      <div class="timeline">
+
+        <!-- Новий сертифікат -->
+        <a href="https://ixdf.org/members/ilona-3/certificate/course/a6003fce-a121-4bba-be47-0d3ac9f69b18" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
+          <div class="timeline-date">2026</div>
+          <div class="timeline-main">
+            <strong>Interaction Design Foundation</strong> — AI for Designers
+            <span class="ext-icon" aria-hidden="true">↗</span>
+          </div>
+        </a>
+
+        <a href="https://ixdf.org/members/ilona-3/certificate/course/4f0e9a57-d736-4397-86f9-3d472498dbd7" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
+          <div class="timeline-date">2026</div>
+          <div class="timeline-main">
+            <strong>Interaction Design Foundation</strong> — Accessibility: How to Design for All
+            <span class="ext-icon" aria-hidden="true">↗</span>
+          </div>
+        </a>
+
+        <a href="https://ixdf.org/members/ilona-3/certificate/course/5c058bd5-6ce5-4319-a266-42ef9fa4ae33" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
+          <div class="timeline-date">2024</div>
+          <div class="timeline-main">
+            <strong>Interaction Design Foundation</strong> — User Research: Methods and Best Practices
+            <span class="ext-icon" aria-hidden="true">↗</span>
+          </div>
+        </a>
+
+        <a href="https://ixdf.org/members/ilona-3/certificate/course/e7f00575-cf81-4ea5-b1e1-343607d47f91" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
+          <div class="timeline-date">2024</div>
+          <div class="timeline-main">
+            <strong>Interaction Design Foundation</strong> — Design for a Better World with Don Norman
+            <span class="ext-icon" aria-hidden="true">↗</span>
+          </div>
+        </a>
+
+        <a href="https://www.coursera.org/account/accomplishments/certificate/V6EVKA8A3UFU" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
+          <div class="timeline-date">2022</div>
+          <div class="timeline-main">
+            <strong>Google</strong> through Coursera — Foundations of UX Design
+            <span class="ext-icon" aria-hidden="true">↗</span>
+          </div>
+        </a>
+
+        <a href="https://lms.beetroot.academy/diploma/ckfcef6km9ca50736ub7uiij6" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
+          <div class="timeline-date">2021</div>
+          <div class="timeline-main">
+            <strong>Beetroot Academy</strong> — UX/UI Design
+            <span class="ext-icon" aria-hidden="true">↗</span>
+          </div>
+        </a>
+
+        <a href="https://www.linkedin.com/school/kyiv-mohyla-academy/" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
+          <div class="timeline-date">2018 — 2020</div>
+          <div class="timeline-main">
+            <strong>National University of Kyiv-Mohyla Academy</strong> — MA in Literary and Comparative Studies
+            <span class="ext-icon" aria-hidden="true">↗</span>
+          </div>
+        </a>
+
+        <a href="https://knu.ua/en/" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
+          <div class="timeline-date">2014 — 2018</div>
+          <div class="timeline-main">
+            <strong>Taras Shevchenko National University of Kyiv</strong> — BA in Literature
+            <span class="ext-icon" aria-hidden="true">↗</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- HOBBIES -->
+    <section class="about-section fade-in-up">
+      <h2>Hobbies &amp; Interests</h2>
+      <p>In my spare time, I enjoy exploring psychology, learning French, reading, drawing, traveling, exploring museums (favorites include Fundació Joan Miró, Centre Pompidou and the Musée des beaux-arts de Montréal), and fermenting vegetables.</p>
+    </section>
+
+    <!-- TWO PHOTOS -->
+    <section class="about-photos-section fade-in-up">
+      <div class="about-photos">
+        <div class="about-photo-small">
+          <img src="images/about/photo-1.jpg" alt="Ilona — photo 1" />
+        </div>
+        <div class="about-photo-small">
+          <img src="images/about/photo-2.jpg" alt="Ilona — photo 2" />
+        </div>
+      </div>
+    </section>
+
+    <!-- BACK TO THE TOP -->
+    <div class="back-to-top-wrap">
+      <a href="#" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back to the top</a>
+    </div>
+
+  </article>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <a href="mailto:ilonaseredawork@gmail.com" class="email-link">ilonaseredawork@gmail.com</a>
+        <div class="footer-thanks">Dyakuyu (Дякую) which means "Thank you" in Ukrainian</div>
+      </div>
+
+      <div class="footer-middle">
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/ilonasereda/" target="_blank">LinkedIn</a>
+          <a href="https://www.behance.net/ilonasereda" target="_blank">Behance</a>
+          <a href="https://dribbble.com/ilonasereda" target="_blank">Dribbble</a>
+          <a href="https://ixdf.org/members/ilona-3?r=ilona-3" target="_blank">IxDF</a>
+        </div>
+        
+        <div class="status">
+          <span class="dot"></span>
+          Available for projects
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>Designed and built with love by Ilona Sereda</div>
+        <div>Portugal, 2026</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== PROGRESS BAR & COLOR CHANGE =====
+    const progressBar = document.getElementById('progressBar');
+    
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      progressBar.style.width = scrolled + "%";
+    });
+
+    // ===== КАСТОМНИЙ КУРСОР =====
+    const cursor = document.getElementById('cursor');
+    const navCursor = document.getElementById('navCursor');
+    let mouseX = 0, mouseY = 0;
+    let cursorX = 0, cursorY = 0;
+    const speed = 0.15;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+      cursorX += (mouseX - cursorX) * speed;
+      cursorY += (mouseY - cursorY) * speed;
+      const t = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+      cursor.style.transform = t;
+      navCursor.style.transform = t;
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('.nav-logo, .nav-link').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('nav-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('nav-hover'));
+    });
+
+    document.querySelectorAll('a, button, .timeline-row, .shape-photo, .figure-rot').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    // ===== GSAP АНІМАЦІЇ =====
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray(".fade-in-up").forEach(function(el) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" }
+        }
+      );
+    });
+  </script>
+</body>
+</html>
