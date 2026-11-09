@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building Trust Early in a Wellness Onboarding - Ilona Sereda</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #1E1E1E;
+      color: #F3EFE6;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; border: none; background: none; }
+
+    :root {
+      --red: #C33C20;
+      --green: #275441;
+      --green-light: #4A8E70;
+      --dark: #1E1E1E;
+      --cream: #F3EFE6;
+      --cream-light: #F2EEE6; 
+      --white: #FBFAFA;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 9999;
+      background: transparent;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--red);
+      transition: width 0.1s ease-out, background-color 0.3s ease;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 2rem;
+      left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      padding: 0 2rem;
+      pointer-events: none;
+    }
+    
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1400px;
+      padding: 1rem 2.5rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(243, 239, 230, 0.1);
+      background: rgba(30, 30, 30, 0.6);
+      pointer-events: auto;
+    }
+    
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cream);
+      transition: color 0.3s;
+      z-index: 2;
+    }
+    .nav-logo:hover { color: var(--green-light); }
+    
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    
+    .nav-link {
+      position: relative;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cream);
+      transition: color 0.3s;
+      z-index: 2;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--green-light); }
+
+    /* Мобільна навігація */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 1rem 1.5rem;
+      background: rgba(30, 30, 30, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(243, 239, 230, 0.1);
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .mobile-logo, .mobile-contact {
+      font-size: 0.95rem; 
+      font-weight: 600;
+      color: var(--cream);
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .mobile-logo:hover, .mobile-contact:hover { color: var(--green-light); }
+    
+    .mobile-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    .burger {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .burger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--cream);
+      transition: all 0.3s;
+    }
+    .burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 5rem 1.5rem 2rem;
+      background: rgba(30, 30, 30, 0.95);
+      backdrop-filter: blur(15px);
+      z-index: 45;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+    .mobile-menu.active {
+      transform: translateY(0);
+    }
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--cream);
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--green-light); }
+
+    @media (max-width: 768px) {
+      .navbar { display: none; }
+      .mobile-nav { display: flex; }
+    }
+
+    /* ===== CASE STUDY LAYOUT ===== */
+    .chapter-dark {
+      background: var(--dark);
+      color: #F3EFE6;
+      padding: 6rem 1.5rem;
+    }
+    .chapter-cream {
+      background: var(--cream);
+      color: var(--dark);
+      padding: 6rem 1.5rem;
+    }
+
+    .text-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .image-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Case Title Section */
+    .case-header {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 14rem 1.5rem 2rem;
+    }
+
+    .case-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+      color: var(--cream-light);
+    }
+    
+    .case-subtitle {
+      font-size: clamp(1.15rem, 2.5vw, 1.35rem);
+      color: #d0d0d8;
+      margin-bottom: 3rem;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .case-meta {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      row-gap: 0.75rem;
+      column-gap: 1.5rem;
+      margin-bottom: 0; 
+    }
+    .case-meta dt {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      font-weight: 400;
+    }
+    .case-meta dd {
+      font-size: 0.95rem;
+      color: #d0d0d8;
+      line-height: 1.6;
+    }
+
+    /* Section Typography */
+    .case-section {
+      margin-bottom: 3rem;
+    }
+    .case-section:last-child {
+      margin-bottom: 0;
+    }
+    .case-section h2 {
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: var(--cream-light);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .chapter-cream .case-section h2 {
+      color: var(--dark);
+    }
+    
+    .case-section h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .chapter-cream .case-section h3 {
+      color: var(--dark);
+    }
+
+    .case-section p {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      margin-bottom: 1.25rem;
+      line-height: 1.8;
+    }
+    .chapter-cream .case-section p {
+      color: #333;
+    }
+    
+    .case-section ul {
+      list-style: none;
+      margin: 1rem 0 1.5rem 0;
+      padding: 0;
+    }
+    .case-section ul li {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      padding-left: 1.5rem;
+      position: relative;
+      margin-bottom: 0.6rem;
+      line-height: 1.7;
+    }
+    .chapter-cream .case-section ul li {
+      color: #333;
+    }
+    .case-section ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-weight: bold;
+    }
+    .case-section strong {
+      color: var(--cream-light);
+      font-weight: 600;
+    }
+    .chapter-cream .case-section strong {
+      color: var(--dark);
+    }
+
+    /* Image block inside chapters */
+    .chapter-image {
+      margin-top: 3rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chapter-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 0; 
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .chapter-image:hover img {
+      transform: scale(1.02);
+    }
+    .image-caption {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      text-align: left; 
+      margin-top: 1rem;
+      line-height: 1.5;
+      padding: 0 1rem;
+    }
+    .chapter-cream .image-caption {
+      color: #666;
+    }
+
+    /* Hero Image */
+    .hero-image-parallax {
+      width: 100%;
+      height: 105vh; 
+      position: relative;
+      overflow: hidden;
+      padding: 1.5rem;
+      background: var(--dark);
+    }
+    @media (min-width: 768px) {
+      .hero-image-parallax { padding: 3rem; }
+    }
+    .hero-image-parallax .img-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .hero-image-parallax:hover .img-wrapper {
+      transform: scale(1.02);
+    }
+    .hero-image-parallax .parallax-img {
+      position: absolute;
+      top: -15%;
+      left: 0;
+      width: 100%;
+      height: 130%;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+    }
+
+    /* Мобільна адаптація Hero Image */
+    @media (max-width: 767px) {
+      .hero-image-parallax {
+        height: auto;
+        padding: 0;
+        background: transparent;
+      }
+      .hero-image-parallax .img-wrapper {
+        height: auto;
+        aspect-ratio: 4/3;
+      }
+      .hero-image-parallax .parallax-img {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transform: none !important; /* Вимикаємо паралакс */
+      }
+    }
+
+    /* Specific Layouts (Priority & Two Users) */
+    .priority-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin: 2rem 0 2.5rem;
+    }
+    @media (min-width: 720px) {
+      .priority-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        align-items: center;
+      }
+    }
+    .priority-image {
+      overflow: hidden;
+      aspect-ratio: 1/1;
+    }
+    .priority-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s;
+    }
+    .priority-image:hover img {
+      transform: scale(1.05);
+    }
+    .priority-text {
+      padding: 0.5rem 0;
+    }
+    .priority-number {
+      font-size: 1rem;
+      color: var(--green); 
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .priority-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+    .chapter-cream .priority-title {
+      color: var(--dark);
+    }
+    .priority-text p {
+      font-size: 1rem;
+      color: #d0d0d8;
+      line-height: 1.7;
+    }
+    .chapter-cream .priority-text p {
+      color: #333;
+    }
+
+    /* Two Users Specific */
+    .two-users-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    @media (min-width: 768px) {
+      .two-users-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+    }
+    .two-users-img-wrap {
+      aspect-ratio: 4/3; 
+      overflow: hidden;
+    }
+    .two-users-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .two-users-img-wrap:hover img {
+      transform: scale(1.02);
+    }
+
+    /* Status Tag */
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0;
+      color: var(--green);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .status-tag .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: statusPulse 1.5s infinite;
+    }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* ===== NEXT CASES & BACK TO TOP ===== */
+    .bottom-cream-wrapper {
+      background: var(--cream);
+      padding: 8rem 1.5rem 6rem;
+      color: var(--dark);
+    }
+    
+    .next-cases-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .bottom-cream-wrapper h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    
+    .next-cases-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-bottom: 6rem;
+    }
+    @media (min-width: 768px) {
+      .next-cases-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .case-link {
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .case-link-img-wrapper {
+      width: 100%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      background: transparent; 
+    }
+    .case-link-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .case-link:hover .case-link-img-wrapper img {
+      transform: scale(1.05);
+    }
+    
+    .case-link-content {
+      padding: 1.5rem 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .case-link-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+    
+    .case-link:hover .case-link-title {
+      color: var(--green);
+    }
+    
+    .case-link-sub {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: auto;
+    }
+
+    .back-to-top-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 6rem;
+    }
+    @media (max-width: 768px) { .back-to-top-container { margin-top: 3rem; } }
+    
+    .back-to-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--dark);
+      padding-bottom: 0.75rem;
+      border-bottom: 3px solid var(--dark);
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .back-to-top .icon { font-size: 1.5rem; transition: transform 0.3s; }
+    .back-to-top:hover { color: var(--green); border-color: var(--green); }
+    .back-to-top:hover .icon { transform: translate(4px, -4px); }
+
+    /* ===== CONTACTS ===== */
+    .contacts-wrapper {
+      background: var(--dark);
+      padding: 6rem 4rem 2rem;
+      border-top: 1px solid rgba(243, 239, 230, 0.1);
+    }
+    @media (max-width: 768px) { .contacts-wrapper { padding: 4rem 1.5rem 2rem; } }
+    
+    .contacts-inner { max-width: 1200px; margin: 0 auto; }
+
+    .contacts-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 3rem;
+    }
+
+    .contacts-top {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .contacts-top { flex-direction: row; justify-content: space-between; align-items: center; }
+    }
+
+    .email-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .email-link {
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: color 0.3s;
+    }
+    .email-link:hover { color: var(--green-light); }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px; height: 40px;
+      border-radius: 4px;
+      border: 1px solid rgba(243, 239, 230, 0.2);
+      color: var(--cream);
+      transition: all 0.3s;
+    }
+    .copy-btn:hover { background: var(--green); border-color: var(--green); color: var(--white); }
+    .copy-btn svg { width: 20px; height: 20px; }
+
+    .footer-thanks {
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      font-weight: 400;
+    }
+
+    .contacts-middle {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .contacts-middle { flex-direction: row; justify-content: space-between; align-items: center; }
+    }
+
+    .socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+    }
+    .socials a:hover { color: var(--green-light); }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .status .dot {
+      width: 8px;
+      height: 8px;
+      background: #3DA875;
+      border-radius: 50%;
+      animation: blinkGreen 1.5s infinite;
+    }
+    @keyframes blinkGreen {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .contacts-bottom {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(243, 239, 230, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: rgba(243, 239, 230, 0.5);
+    }
+    @media (min-width: 768px) {
+      .contacts-bottom { flex-direction: row; justify-content: space-between; }
+    }
+
+    /* ===== АНІМАЦІЇ ===== */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- DESKTOP NAV -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-logo">ILONA SEREDA</a>
+      <div class="nav-links">
+        <a href="index.html#work" class="nav-link">Projects</a>
+        <a href="index.html#about" class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact me</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav">
+    <a href="index.html" class="mobile-logo">ILONA SEREDA</a>
+    <div class="mobile-nav-right">
+      <a href="#contact" class="mobile-contact">Contact me</a>
+      <div class="burger" id="burgerBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#work" class="mobile-nav-link">Projects</a>
+    <a href="index.html#about" class="mobile-nav-link">About</a>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="chapter-dark" style="padding-bottom: 0;">
+    <div class="case-header">
+      <h1 class="case-title fade-in-up">Building Trust Early in a<br>Wellness Onboarding</h1>
+      <p class="case-subtitle fade-in-up">19 usability issues identified, all fixed</p>
+
+      <dl class="case-meta fade-in-up">
+        <dt>Role</dt>
+        <dd>Lead Product Designer</dd>
+        <dt>Team</dt>
+        <dd>Design team (3 people), Developers, CEO, Marketing Manager</dd>
+        <dt>Platforms</dt>
+        <dd>Mobile App</dd>
+        <dt>Users</dt>
+        <dd>Clients, Practitioners</dd>
+      </dl>
+    </div>
+  </header>
+
+  <!-- ===== HERO IMAGE ===== -->
+  <div class="hero-image-parallax fade-in-up" style="margin-bottom: 0;">
+    <div class="img-wrapper">
+      <div class="parallax-img" style="background-image: url('images/onboarding/hero.webp');"></div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER: OVERVIEW ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Overview</h2>
+        <p>FemEntity is an AI-powered wellness platform that helps users find practitioners and resources based on their needs and preferences.</p>
+        <p>I joined after the initial onboarding concept had already been designed. I redesigned the flow and iterated on it as the product evolved, focusing on making the experience easier to get through without asking users to answer everything upfront.</p>
+        <p>The challenge was finding the right balance: we needed enough information for relevant personalization, but didn't want users to spend too much time answering questions before seeing value.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/onboarding/overview.webp" alt="Initial onboarding draft" loading="lazy" />
+        <p class="image-caption">Initial onboarding draft done by non-designers</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: PROBLEM ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Problem</h2>
+        <h3>The onboarding asked too much, too soon</h3>
+        <p>Across 2 user types (clients and practitioners), users had to answer a long series of questions before reaching value. This created unnecessary mental load, especially when sharing sensitive personal information.</p>
+        <h3>The value wasn't always clear</h3>
+        <p>Users were more comfortable sharing personal information when they understood why we were asking for it and how it would improve their experience.</p>
+        <h3>We needed to simplify without losing useful data</h3>
+        <p>The challenge was to decide what users needed to answer upfront and what could be collected later.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/onboarding/problem.webp" alt="Previous onboarding flow" loading="lazy" />
+        <p class="image-caption">The previous onboarding. The flow asked for a lot of information upfront, with limited context around why it was needed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: RESEARCH ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Research</h2>
+        <p>I ran a heuristic evaluation of the existing flow and a thematic analysis of 20 user interviews. Identified 19 usability issues (avg. severity 2.4/5) across the onboarding flow for 2 user types, and synthesized them into 15+ prioritized recommendations.</p>
+        <p>The interviews kept circling back to one point, where users were happy to share personal information, but only when they understood why we needed it and how it would make their recommendations better.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/onboarding/research.webp" alt="Thematic analysis" loading="lazy" />
+        <p class="image-caption">Thematic analysis from user interviews, surfacing key issues around trust and cognitive load.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: APPROACH ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Approach</h2>
+        <p>In the redesign, I prioritized getting users to value faster, reducing the amount of thinking and decision-making required at the start, and making it clear why we needed each piece of personal information.</p>
+
+        <div class="priority-grid">
+          <div class="priority-image">
+            <img src="images/onboarding/priority-01.webp" alt="What brings you here today screen" loading="lazy" />
+          </div>
+          <div class="priority-text">
+            <div class="priority-number">01</div>
+            <div class="priority-title">Start with the user's goal</div>
+            <p>Rather than starting with demographic or personal details, we wanted to understand what the user was looking for first. This also helped connect the onboarding questions to the value FemEntity could provide.</p>
+          </div>
+        </div>
+
+        <div class="priority-grid">
+          <div class="priority-image">
+            <img src="images/onboarding/priority-02.webp" alt="Quick start" loading="lazy" />
+          </div>
+          <div class="priority-text">
+            <div class="priority-number">02</div>
+            <div class="priority-title">Break up the questions</div>
+            <p>With my design colleague, we restructured the onboarding around progressive disclosure. Essential information comes first, while more detailed profile information can be collected later.</p>
+          </div>
+        </div>
+
+        <div class="priority-grid">
+          <div class="priority-image">
+            <img src="images/onboarding/priority-03.webp" alt="Location question" loading="lazy" />
+          </div>
+          <div class="priority-text">
+            <div class="priority-number">03</div>
+            <div class="priority-title">Explain why it matters</div>
+            <p>We added context around questions such as location, interests, and challenges instead of asking for information without explaining its purpose.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: UI EXPLORATION ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>UI exploration</h2>
+        <p>Small UI decisions also mattered, not just the overall flow. For example, I explored different chip styles and states: multi-select, single-select, colour-coded, and plain, and compared how clear and easy to scan they were when showing 10+ options on a small screen.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/onboarding/ui-chips.webp" alt="Identity chips exploration" loading="lazy" />
+        <p class="image-caption">Chip explorations: colour, contrast, and selection states across multiple variants.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: TWO USER TYPES ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Two user types</h2>
+        <p>FemEntity has two very different user types, so we couldn't use the same onboarding for both. I designed separate journeys for clients and practitioners, with different questions and priorities for each.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="two-users-grid">
+        <div>
+          <div class="two-users-img-wrap">
+            <img src="images/onboarding/flow-client.webp" alt="Client onboarding flow" loading="lazy" />
+          </div>
+          <p class="image-caption" style="text-align: left; margin-top: 1rem;">Client onboarding screens</p>
+        </div>
+        <div>
+          <div class="two-users-img-wrap">
+            <img src="images/onboarding/flow-practitioner.webp" alt="Practitioner onboarding flow" loading="lazy" />
+          </div>
+          <p class="image-caption" style="text-align: left; margin-top: 1rem;">Practitioner onboarding screens</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: SIMPLIFYING THE FLOW ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Simplifying the flow for users</h2>
+        <p>FemEntity was still pre-launch, so we didn't have production data to compare completion rates. Instead, we used usability testing and user feedback to see whether the new flow was easier to understand and complete.</p>
+        <p>The final onboarding evolved through multiple iterations as we negotiated between keeping the flow simple for users and collecting enough structured data to power relevant recommendations and AI matching.</p>
+        <p>The final flow collects information in stages instead of asking users to complete everything at once.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/onboarding/final-flow.webp" alt="Final onboarding flow" loading="lazy" />
+        <p class="image-caption">The final flow collects information in stages instead of asking users to complete everything at once.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: METRICS ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Metrics &amp; Usability Testing</h2>
+        <p>To validate the redesigned flow, I defined a usability testing plan that measures both task performance and perceived experience. The study is currently in progress.</p>
+
+        <div class="status-tag">
+          <span class="dot"></span>
+          Usability testing in progress
+        </div>
+
+        <h3>Test setup</h3>
+        <ul>
+          <li><strong>Participants</strong>: 8+ solo and clinic practitioners, 5+ clients planned</li>
+          <li><strong>Format</strong>: moderated, remote</li>
+          <li><strong>Tasks</strong>: create an account, complete onboarding, choose a plan, make a payment, book a session</li>
+        </ul>
+
+        <h3>Activation metrics</h3>
+        <ul>
+          <li><strong>Onboarding completion rate</strong>: share of participants who finish the flow without help.</li>
+          <li><strong>Drop-off per step</strong>: where participants abandon or hesitate.</li>
+          <li><strong>Time to complete</strong>: total time from account creation to the first booked session.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/onboarding/usability-testing.webp" alt="Usability testing document" loading="lazy" />
+        <p class="image-caption">Usability testing document: measurement plan and data collection in progress.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: IMPACT & LEARNING ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Impact</h2>
+        <p>Conversion data to be updated. The targets below are for post-launch validation, measured against the current flow, which I assessed through a flow audit and a heuristic evaluation.</p>
+
+        <h3>Early usability validation</h3>
+        <ul>
+          <li>The client participant rated the redesigned experience as easy to use (5/5) and reported a positive overall impression (4/5).</li>
+          <li>Practitioner participants completed core account, profile, calendar, and profile-editing tasks without assistance.</li>
+          <li>Onboarding was positively received for reducing the amount of information required upfront.</li>
+          <li>Research identified priority improvements in save-state feedback, scheduling clarity, practitioner credibility, and the transition from onboarding to booking.</li>
+        </ul>
+
+        <h3>Post-launch targets</h3>
+        <ul>
+          <li><strong>Flow consistency</strong> (heuristic evaluation, 1-5): from 2/5 to 4/5</li>
+          <li><strong>Time to complete</strong>: from 5-7 min to 3-4 min</li>
+          <li><strong>SUS-5</strong>: average rating ≥4/5 across core statements</li>
+          <li><strong>Trust</strong>: improve confidence in sharing personal information and practitioner credibility</li>
+        </ul>
+
+        <p>These targets will be validated through usability testing and post-launch data.</p>
+      </div>
+
+      <div class="case-section">
+        <h2>Key learning</h2>
+        <p>Fewer screens do not automatically make onboarding easier. Users need to understand why information is being collected and how it improves their experience.</p>
+        <p>Progressive disclosure also needs reliable system feedback: users must know what has saved, what happens next, and whether they can complete remaining steps later.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NEXT CASES & BACK TO TOP ===== -->
+  <div class="bottom-cream-wrapper fade-in-up">
+    <div class="next-cases-inner">
+      <h3>Next cases</h3>
+      <div class="next-cases-grid">
+        
+        <a href="case-hrms-redesign.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case2-cover.webp" alt="HRMS Redesign Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Redesigning HRMS for Better Talent Management & Acquisition</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+        
+        <a href="case-traxr.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case3-cover.webp" alt="Traxr Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Traxr: From a Cluttered Backlink Tool to a Clearer Decision-Making Workspace</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+
+        <a href="case-fementity-community.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case4-cover.webp" alt="FemEntity Community Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Designing a Safe & Engaging Community Experience for FemEntity</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+
+      </div>
+      
+      <div class="back-to-top-container">
+        <a href="#" class="back-to-top" id="backToTop">
+          Back to the top
+          <span class="icon">↑</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACTS -->
+  <section class="contacts-wrapper" id="contact">
+    <div class="contacts-inner">
+      <h2 class="contacts-title">Contact me</h2>
+
+      <div class="contacts-top">
+        <div class="email-container">
+          <a href="mailto:ilonaseredawork@gmail.com" class="email-link" id="emailLink">ilonaseredawork@gmail.com</a>
+          <button class="copy-btn" id="copyBtn" title="Copy email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="footer-thanks">Dyakuyu (Дякую) which means "Thank you" in Ukrainian</div>
+      </div>
+
+      <div class="contacts-middle">
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/ilonasereda/" target="_blank">LinkedIn</a>
+          <a href="https://www.behance.net/ilonasereda" target="_blank">Behance</a>
+          <a href="https://dribbble.com/ilonasereda" target="_blank">Dribbble</a>
+          <a href="https://ixdf.org/members/ilona-3?r=ilona-3" target="_blank">IxDF</a>
+        </div>
+        
+        <div class="status">
+          <span class="dot"></span>
+          Available for projects
+        </div>
+      </div>
+
+      <div class="contacts-bottom">
+        <div>Designed and built with love by Ilona Sereda</div>
+        <div>Portugal, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ===== PROGRESS BAR =====
+    const progressBar = document.getElementById('progressBar');
+    
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      progressBar.style.width = scrolled + "%";
+    });
+
+    // ===== МОБІЛЬНЕ МЕНЮ =====
+    const burgerBtn = document.getElementById('burgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+    burgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+      burgerBtn.classList.toggle('active');
+    });
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        burgerBtn.classList.remove('active');
+      });
+    });
+
+    // ===== COPY EMAIL =====
+    const copyBtn = document.getElementById('copyBtn');
+    const emailLink = document.getElementById('emailLink');
+    const emailToCopy = "ilonaseredawork@gmail.com";
+
+    function copyEmail() {
+      navigator.clipboard.writeText(emailToCopy).then(() => {
+        const originalHTML = copyBtn.innerHTML;
+        copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        copyBtn.style.color = '#4ade80';
+        
+        setTimeout(() => {
+          copyBtn.innerHTML = originalHTML;
+          copyBtn.style.color = 'var(--cream)';
+        }, 2000);
+      });
+    }
+
+    copyBtn.addEventListener('click', copyEmail);
+    emailLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      copyEmail();
+    });
+
+    // ===== GSAP АНІМАЦІЇ =====
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray(".fade-in-up").forEach(function(el) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" }
+        }
+      );
+    });
+
+    // Паралакс для Hero (тільки на десктопі)
+    let mm = gsap.matchMedia();
+    mm.add("(min-width: 768px)", () => {
+      gsap.fromTo(".hero-image-parallax .parallax-img", 
+        { y: "-10%" },
+        {
+          y: "10%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-image-parallax",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        }
+      );
+    });
+
+    // Smooth scroll for Back to Top
+    document.getElementById('backToTop').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

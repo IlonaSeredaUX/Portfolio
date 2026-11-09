@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From a Browser Extension to an HRMS: Helping Recruiters Work Faster - Ilona Sereda</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #1E1E1E;
+      color: #F3EFE6;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; border: none; background: none; }
+
+    :root {
+      --red: #C33C20;
+      --green: #275441;
+      --green-light: #4A8E70;
+      --dark: #1E1E1E;
+      --cream: #F3EFE6;
+      --cream-light: #F2EEE6;
+      --white: #FBFAFA;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 9999;
+      background: transparent;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--red);
+      transition: width 0.1s ease-out, background-color 0.3s ease;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 2rem;
+      left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      padding: 0 2rem;
+      pointer-events: none;
+    }
+    
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1400px;
+      padding: 1rem 2.5rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(243, 239, 230, 0.1);
+      background: rgba(30, 30, 30, 0.6);
+      pointer-events: auto;
+    }
+    
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cream);
+      transition: color 0.3s;
+      z-index: 2;
+    }
+    .nav-logo:hover { color: var(--green-light); }
+    
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    
+    .nav-link {
+      position: relative;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cream);
+      transition: color 0.3s;
+      z-index: 2;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--green-light); }
+
+    /* Мобільна навігація */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 1rem 1.5rem;
+      background: rgba(30, 30, 30, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(243, 239, 230, 0.1);
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .mobile-logo, .mobile-contact {
+      font-size: 0.95rem; 
+      font-weight: 600;
+      color: var(--cream);
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .mobile-logo:hover, .mobile-contact:hover { color: var(--green-light); }
+    
+    .mobile-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    .burger {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .burger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--cream);
+      transition: all 0.3s;
+    }
+    .burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 5rem 1.5rem 2rem;
+      background: rgba(30, 30, 30, 0.95);
+      backdrop-filter: blur(15px);
+      z-index: 45;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+    .mobile-menu.active {
+      transform: translateY(0);
+    }
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--cream);
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--green-light); }
+
+    @media (max-width: 768px) {
+      .navbar { display: none; }
+      .mobile-nav { display: flex; }
+    }
+
+    /* ===== CASE STUDY LAYOUT ===== */
+    .chapter-dark {
+      background: var(--dark);
+      color: #F3EFE6;
+      padding: 6rem 1.5rem;
+    }
+    .chapter-cream {
+      background: var(--cream);
+      color: var(--dark);
+      padding: 6rem 1.5rem;
+    }
+
+    .text-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .image-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Case Title Section */
+    .case-header {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 14rem 1.5rem 2rem;
+    }
+
+    .case-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+      color: var(--cream-light);
+    }
+    
+    .case-subtitle {
+      font-size: clamp(1.15rem, 2.5vw, 1.35rem);
+      color: #d0d0d8; 
+      opacity: 0.7; 
+      margin-bottom: 3rem;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .case-description {
+      font-size: 1.1rem;
+      color: #d0d0d8;
+      margin-bottom: 3rem;
+      line-height: 1.8;
+    }
+
+    .case-meta {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      row-gap: 0.75rem;
+      column-gap: 1.5rem;
+      margin-bottom: 0; 
+    }
+    .case-meta dt {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      font-weight: 400;
+    }
+    .case-meta dd {
+      font-size: 0.95rem;
+      color: #d0d0d8;
+      line-height: 1.6;
+    }
+
+    /* Section Typography */
+    .case-section {
+      margin-bottom: 3rem;
+    }
+    .case-section:last-child {
+      margin-bottom: 0;
+    }
+    .case-section h2 {
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: var(--cream-light);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .chapter-cream .case-section h2 {
+      color: var(--dark);
+    }
+    
+    .case-section h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .chapter-cream .case-section h3 {
+      color: var(--dark);
+    }
+
+    .case-section p {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      margin-bottom: 1.25rem;
+      line-height: 1.8;
+    }
+    .chapter-cream .case-section p {
+      color: #333;
+    }
+    
+    .case-section ul {
+      list-style: none;
+      margin: 1rem 0 1.5rem 0;
+      padding: 0;
+    }
+    .case-section ul li {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      padding-left: 1.5rem;
+      position: relative;
+      margin-bottom: 0.6rem;
+      line-height: 1.7;
+    }
+    .chapter-cream .case-section ul li {
+      color: #333;
+    }
+    .case-section ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-weight: bold;
+    }
+    .case-section strong {
+      color: var(--cream-light);
+      font-weight: 600;
+    }
+    .chapter-cream .case-section strong {
+      color: var(--dark);
+    }
+
+    /* Image block inside chapters */
+    .chapter-image {
+      margin-top: 3rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chapter-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 0; 
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .chapter-image:hover img {
+      transform: scale(1.02);
+    }
+    .image-caption {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      text-align: left; 
+      margin-top: 1rem;
+      line-height: 1.5;
+      padding: 0 1rem;
+    }
+    .chapter-cream .image-caption {
+      color: #666;
+    }
+
+    /* Hero Image */
+    .hero-image-parallax {
+      width: 100%;
+      height: 105vh; 
+      position: relative;
+      overflow: hidden;
+      padding: 1.5rem;
+      background: var(--dark);
+    }
+    @media (min-width: 768px) {
+      .hero-image-parallax { padding: 3rem; }
+    }
+    .hero-image-parallax .img-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .hero-image-parallax:hover .img-wrapper {
+      transform: scale(1.02);
+    }
+    .hero-image-parallax .parallax-img {
+      position: absolute;
+      top: -15%;
+      left: 0;
+      width: 100%;
+      height: 130%;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+    }
+
+    /* Мобільна адаптація Hero Image */
+    @media (max-width: 767px) {
+      .hero-image-parallax {
+        height: auto;
+        padding: 0;
+        background: transparent;
+      }
+      .hero-image-parallax .img-wrapper {
+        height: auto;
+        aspect-ratio: 4/3;
+      }
+      .hero-image-parallax .parallax-img {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transform: none !important; /* Вимикаємо паралакс */
+      }
+    }
+
+    /* ===== ТАБЛИЦЯ ===== */
+    .case-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 1rem;
+    }
+    .case-table th {
+      text-align: left;
+      padding: 0.75rem 0.5rem;
+      font-weight: 600;
+      color: #8a8a92;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-bottom: 2px solid rgba(243, 239, 230, 0.2);
+    }
+    .chapter-cream .case-table th {
+      border-bottom-color: rgba(30, 30, 30, 0.2);
+      color: #666;
+    }
+    
+    .case-table td {
+      padding: 1rem 0.5rem;
+      border-bottom: 1px solid rgba(243, 239, 230, 0.1);
+      color: #d0d0d8;
+      vertical-align: top;
+    }
+    .chapter-cream .case-table td {
+      border-bottom-color: rgba(30, 30, 30, 0.1);
+      color: #333;
+    }
+    
+    .case-table td:first-child {
+      color: var(--cream-light);
+      font-weight: 600;
+    }
+    .chapter-cream .case-table td:first-child {
+      color: var(--dark);
+    }
+    
+    .case-table td.improvement {
+      color: var(--cream-light);
+      font-weight: 700;
+    }
+    
+    @media (max-width: 640px) {
+      .case-table { font-size: 0.85rem; }
+      .case-table th, .case-table td { padding: 0.6rem 0.3rem; }
+    }
+
+    /* Callout / quote */
+    .case-callout {
+      padding: 1.5rem 1.75rem;
+      border-left: 3px solid var(--green);
+      background: rgba(39, 84, 65, 0.08);
+      border-radius: 0 0.5rem 0.5rem 0;
+      margin: 1.75rem 0 2rem;
+    }
+    .chapter-cream .case-callout {
+      background: rgba(39, 84, 65, 0.05);
+    }
+    .case-callout p {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      margin-bottom: 0;
+      line-height: 1.7;
+      font-style: italic;
+    }
+    .chapter-cream .case-callout p {
+      color: #333;
+    }
+    .case-callout .attribution {
+      display: block;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: #8a8a92;
+      font-style: normal;
+    }
+
+    /* Disclaimer */
+    .case-disclaimer {
+      font-size: 0.85rem;
+      color: #7a7a82;
+      font-style: italic;
+      line-height: 1.7;
+      margin: 1.5rem 0 2rem;
+    }
+
+    /* ===== NEXT CASES & BACK TO TOP ===== */
+    .bottom-cream-wrapper {
+      background: var(--dark);
+      padding: 8rem 1.5rem 6rem;
+      color: var(--cream);
+    }
+    
+    .next-cases-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .bottom-cream-wrapper h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--cream-light);
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    
+    .next-cases-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-bottom: 6rem;
+    }
+    @media (min-width: 768px) {
+      .next-cases-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .case-link {
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .case-link-img-wrapper {
+      width: 100%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      background: transparent; 
+    }
+    .case-link-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .case-link:hover .case-link-img-wrapper img {
+      transform: scale(1.05);
+    }
+    
+    .case-link-content {
+      padding: 1.5rem 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .case-link-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+    
+    .case-link:hover .case-link-title {
+      color: var(--green-light);
+    }
+    
+    .case-link-sub {
+      font-size: 0.8rem;
+      color: #8a8a92;
+      margin-top: auto;
+    }
+
+    .back-to-top-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 6rem;
+    }
+    @media (max-width: 768px) { .back-to-top-container { margin-top: 3rem; } }
+    
+    .back-to-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--cream);
+      padding-bottom: 0.75rem;
+      border-bottom: 3px solid var(--cream);
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .back-to-top .icon { font-size: 1.5rem; transition: transform 0.3s; }
+    .back-to-top:hover { color: var(--green-light); border-color: var(--green-light); }
+    .back-to-top:hover .icon { transform: translate(4px, -4px); }
+
+    /* ===== CONTACTS ===== */
+    .contacts-wrapper {
+      background: var(--dark);
+      padding: 6rem 4rem 2rem;
+      border-top: 1px solid rgba(243, 239, 230, 0.1);
+    }
+    @media (max-width: 768px) { .contacts-wrapper { padding: 4rem 1.5rem 2rem; } }
+    
+    .contacts-inner { max-width: 1200px; margin: 0 auto; }
+
+    .contacts-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 3rem;
+    }
+
+    .contacts-top {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .contacts-top { flex-direction: row; justify-content: space-between; align-items: center; }
+    }
+
+    .email-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .email-link {
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: color 0.3s;
+    }
+    .email-link:hover { color: var(--green-light); }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px; height: 40px;
+      border-radius: 4px;
+      border: 1px solid rgba(243, 239, 230, 0.2);
+      color: var(--cream);
+      transition: all 0.3s;
+    }
+    .copy-btn:hover { background: var(--green); border-color: var(--green); color: var(--white); }
+    .copy-btn svg { width: 20px; height: 20px; }
+
+    .footer-thanks {
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      font-weight: 400;
+    }
+
+    .contacts-middle {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .contacts-middle { flex-direction: row; justify-content: space-between; align-items: center; }
+    }
+
+    .socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+    }
+    .socials a:hover { color: var(--green-light); }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .status .dot {
+      width: 8px;
+      height: 8px;
+      background: #3DA875;
+      border-radius: 50%;
+      animation: blinkGreen 1.5s infinite;
+    }
+    @keyframes blinkGreen {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .contacts-bottom {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(243, 239, 230, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: rgba(243, 239, 230, 0.5);
+    }
+    @media (min-width: 768px) {
+      .contacts-bottom { flex-direction: row; justify-content: space-between; }
+    }
+
+    /* ===== АНІМАЦІЇ ===== */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- DESKTOP NAV -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-logo">ILONA SEREDA</a>
+      <div class="nav-links">
+        <a href="index.html#work" class="nav-link">Projects</a>
+        <a href="index.html#about" class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact me</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav">
+    <a href="index.html" class="mobile-logo">ILONA SEREDA</a>
+    <div class="mobile-nav-right">
+      <a href="#contact" class="mobile-contact">Contact me</a>
+      <div class="burger" id="burgerBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#work" class="mobile-nav-link">Projects</a>
+    <a href="index.html#about" class="mobile-nav-link">About</a>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="chapter-dark" style="padding-bottom: 0;">
+    <div class="case-header">
+      <h1 class="case-title fade-in-up">From a Browser Extension to an HRMS: Helping Recruiters Work Faster</h1>
+      <p class="case-subtitle fade-in-up">SUS score increased from 48 to 74</p>
+      <p class="case-description fade-in-up">A three-month redesign of an HRMS platform for B2B recruitment teams, from research and IA restructure to usability testing with five recruiters.</p>
+
+      <dl class="case-meta fade-in-up">
+        <dt>Role</dt>
+        <dd>UX Designer</dd>
+        <dt>Duration</dt>
+        <dd>3 months (HRMS redesign)</dd>
+        <dt>Team</dt>
+        <dd>CTO, Talent Acquisition Manager, 2 Developers</dd>
+        <dt>Tools</dt>
+        <dd>Figma, Google Forms, Maze</dd>
+      </dl>
+    </div>
+  </header>
+
+  <!-- ===== HERO IMAGE ===== -->
+  <div class="hero-image-parallax fade-in-up" style="margin-bottom: 0;">
+    <div class="img-wrapper">
+      <div class="parallax-img" style="background-image: url('images/hrms/hero.webp');"></div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER: CONTEXT ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Context</h2>
+        <p>I originally joined the company to design a browser extension for recruiters who sourced candidates on external websites. They had to copy profile details into the internal system manually, which made a routine task slower than it needed to be and created opportunities for mistakes.</p>
+        <p>After the extension shipped, the client asked me to redesign the HRMS as well. The extension made adding candidates easier, but the next part of the workflow was still difficult. Recruiters still had to navigate a system where finding information and completing everyday tasks was not always straightforward.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/hrms/extension.webp" alt="Browser extension, candidate profile panel" loading="lazy" />
+        <p class="image-caption">The browser extension panel, capturing essential candidate details without another long form.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: UNDERSTANDING ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Understanding the HRMS problem</h2>
+        <p>I started by reviewing survey responses from 52 users, discussing the product with the CTO and Talent Acquisition Manager, and mapping the tasks recruiters handled in their day-to-day work.</p>
+        <p>44 of 52 survey respondents described the product as inconvenient or difficult to use. The feedback revealed several issues: important actions and required fields were easy to overlook, and the amount of information on screen made it difficult to find what mattered. Users also mentioned that the colours and overall layout were distracting.</p>
+        <p>These issues explained why recruiters found the system frustrating. Users had to spend a lot of time looking for information, and some actions were not visible.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/hrms/old-design.webp" alt="Old HRMS, visual noise and unclear hierarchy" loading="lazy" />
+        <p class="image-caption">Mindmap of the HRMS</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: REDESIGNING ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Redesigning the HRMS</h2>
+        <p>I reworked the sitemap and explored different layouts through sketches before moving on to wireframes and an interactive prototype. Throughout the three-month project, I reviewed the designs with the CTO and developers to discuss proposed changes and make sure they could be implemented within the team's technical constraints.</p>
+
+        <h3>A dashboard that prioritises everyday work</h3>
+        <p>The dashboard brought open vacancies, current activity, upcoming work, and shortcuts to common actions together on one screen. Here I focused on the information recruiters were most likely to need when opening the system. I wanted the dashboard to give recruiters a useful overview without becoming another dense screen to work through.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/hrms/new-dashboard.webp" alt="Redesigned dashboard" loading="lazy" />
+        <p class="image-caption">The new dashboard: open vacancies, activity, and shortcuts on one screen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: VACANCIES ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h3>Making vacancies easier to manage</h3>
+        <p>For the vacancies page, I moved towards a table layout that made it easier to scan multiple roles and compare their status at a glance. Search and filters helped recruiters find specific vacancies, while each row displayed the stage, key dates, and the person responsible for the role.</p>
+        <p>I kept the Open and Edit actions visible directly in each row instead of placing them inside a menu. This removed an extra step and made frequently used actions easier to find.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/hrms/new-vacancies.webp" alt="Redesigned vacancies page" loading="lazy" />
+        <p class="image-caption">The new vacancies page, table layout with inline Open and Edit actions in each row.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: TESTING ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Testing the redesign</h2>
+        <p>Once the prototype was ready, I tested it alongside the original HRMS with five recruiters. We focused on three tasks they would encounter in everyday work: finding a vacancy, reviewing vacancy details, and editing candidate details. All five participants had between one and four years of experience using the original system.</p>
+
+        <h3>Task completion time</h3>
+        <p>The average time spent on each task was lower with the redesigned prototype:</p>
+
+        <table class="case-table">
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Original HRMS</th>
+              <th>Redesigned</th>
+              <th>Improvement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Finding a vacancy</td>
+              <td>2 min 40 sec</td>
+              <td>1 min 50 sec</td>
+              <td class="improvement">31% faster</td>
+            </tr>
+            <tr>
+              <td>Reviewing vacancy details</td>
+              <td>3 min 10 sec</td>
+              <td>2 min 05 sec</td>
+              <td class="improvement">34% faster</td>
+            </tr>
+            <tr>
+              <td>Editing candidate details</td>
+              <td>4 min 20 sec</td>
+              <td>2 min 55 sec</td>
+              <td class="improvement">33% faster</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>The biggest difference was in reviewing vacancy details, which took an average of 2 minutes and 5 seconds with the prototype, compared with 3 minutes and 10 seconds in the original HRMS.</p>
+
+        <h3>System Usability Scale</h3>
+        <p>The SUS score increased from 48 for the original HRMS to 74 for the redesigned prototype. This suggests that participants had a more positive perception of the redesigned experience.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/hrms/process-tracking.webp" alt="Usability testing, SUS score" loading="lazy" />
+        <p class="image-caption">Usability testing, SUS score improved from 48 to 74.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: TAKEAWAY ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <div class="case-callout">
+          <p>"Before, I wasn't sure where to click to edit, it was so frustrating. Now I see the edit button clearly right there in the row."</p>
+          <span class="attribution">— Recruiter, 2 years in role</span>
+        </div>
+
+        <p>That comment reflected a practical goal of the redesign: recruiters should not have to search for a basic action every time they need to use it.</p>
+        <p>The study involved only five participants, so I treated the findings as an early indication rather than a prediction of post-launch results.</p>
+      </div>
+
+      <div class="case-section">
+        <h2>Takeaway</h2>
+        <p>Working on the extension first gave me a close look at one part of the recruiting process, but it also showed that making one task faster does not necessarily improve the overall experience. Recruiters could add candidates more easily, yet still lose time trying to find information or work out where to make changes.</p>
+        <p>In the HRMS redesign, I focused on the parts of the interface that affected those everyday tasks: how information was organised, what recruiters could see at a glance, and how easily they could access common actions. The usability tests showed encouraging improvements across all three tasks, helping the team decide what to build and test next.</p>
+
+        <p class="case-disclaimer">The company name and some project details have been changed due to an NDA. The work and outcomes are real.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NEXT CASES & BACK TO TOP ===== -->
+  <div class="bottom-cream-wrapper fade-in-up">
+    <div class="next-cases-inner">
+      <h3>Next cases</h3>
+      <div class="next-cases-grid">
+        
+        <a href="case-wellness-onboarding.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case1-cover.webp" alt="Wellness Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Building Trust Early in a Wellness Onboarding</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+        
+        <a href="case-traxr.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case3-cover.webp" alt="Traxr Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Traxr: From a Cluttered Backlink Tool to a Clearer Decision-Making Workspace</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+
+        <a href="case-fementity-community.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case4-cover.webp" alt="FemEntity Community Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Designing a Safe & Engaging Community Experience for FemEntity</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+
+      </div>
+      
+      <div class="back-to-top-container">
+        <a href="#" class="back-to-top" id="backToTop">
+          Back to the top
+          <span class="icon">↑</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACTS -->
+  <section class="contacts-wrapper" id="contact">
+    <div class="contacts-inner">
+      <h2 class="contacts-title">Contact me</h2>
+
+      <div class="contacts-top">
+        <div class="email-container">
+          <a href="mailto:ilonaseredawork@gmail.com" class="email-link" id="emailLink">ilonaseredawork@gmail.com</a>
+          <button class="copy-btn" id="copyBtn" title="Copy email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="footer-thanks">Dyakuyu (Дякую) which means "Thank you" in Ukrainian</div>
+      </div>
+
+      <div class="contacts-middle">
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/ilonasereda/" target="_blank">LinkedIn</a>
+          <a href="https://www.behance.net/ilonasereda" target="_blank">Behance</a>
+          <a href="https://dribbble.com/ilonasereda" target="_blank">Dribbble</a>
+          <a href="https://ixdf.org/members/ilona-3?r=ilona-3" target="_blank">IxDF</a>
+        </div>
+        
+        <div class="status">
+          <span class="dot"></span>
+          Available for projects
+        </div>
+      </div>
+
+      <div class="contacts-bottom">
+        <div>Designed and built with love by Ilona Sereda</div>
+        <div>Portugal, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ===== PROGRESS BAR =====
+    const progressBar = document.getElementById('progressBar');
+    
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      progressBar.style.width = scrolled + "%";
+    });
+
+    // ===== МОБІЛЬНЕ МЕНЮ =====
+    const burgerBtn = document.getElementById('burgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+    burgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+      burgerBtn.classList.toggle('active');
+    });
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        burgerBtn.classList.remove('active');
+      });
+    });
+
+    // ===== COPY EMAIL =====
+    const copyBtn = document.getElementById('copyBtn');
+    const emailLink = document.getElementById('emailLink');
+    const emailToCopy = "ilonaseredawork@gmail.com";
+
+    function copyEmail() {
+      navigator.clipboard.writeText(emailToCopy).then(() => {
+        const originalHTML = copyBtn.innerHTML;
+        copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        copyBtn.style.color = '#4ade80';
+        
+        setTimeout(() => {
+          copyBtn.innerHTML = originalHTML;
+          copyBtn.style.color = 'var(--cream)';
+        }, 2000);
+      });
+    }
+
+    copyBtn.addEventListener('click', copyEmail);
+    emailLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      copyEmail();
+    });
+
+    // ===== GSAP АНІМАЦІЇ =====
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray(".fade-in-up").forEach(function(el) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" }
+        }
+      );
+    });
+
+    // Паралакс для Hero (тільки на десктопі)
+    let mm = gsap.matchMedia();
+    mm.add("(min-width: 768px)", () => {
+      gsap.fromTo(".hero-image-parallax .parallax-img", 
+        { y: "-10%" },
+        {
+          y: "10%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-image-parallax",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        }
+      );
+    });
+
+    // Smooth scroll for Back to Top
+    document.getElementById('backToTop').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

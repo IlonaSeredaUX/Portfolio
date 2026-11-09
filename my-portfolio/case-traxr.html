@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traxr: From a Cluttered Backlink Tool to a Clearer Decision-Making Workspace - Ilona Sereda</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #1E1E1E;
+      color: #F3EFE6;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; border: none; background: none; }
+
+    :root {
+      --red: #C33C20;
+      --green: #275441;
+      --green-light: #4A8E70;
+      --dark: #1E1E1E;
+      --cream: #F3EFE6;
+      --cream-light: #F2EEE6;
+      --white: #FBFAFA;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 9999;
+      background: transparent;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--red);
+      transition: width 0.1s ease-out, background-color 0.3s ease;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 2rem;
+      left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      padding: 0 2rem;
+      pointer-events: none;
+    }
+    
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1400px;
+      padding: 1rem 2.5rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(243, 239, 230, 0.1);
+      background: rgba(30, 30, 30, 0.6);
+      pointer-events: auto;
+    }
+    
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cream);
+      transition: color 0.3s;
+      z-index: 2;
+    }
+    .nav-logo:hover { color: var(--green-light); }
+    
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    
+    .nav-link {
+      position: relative;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cream);
+      transition: color 0.3s;
+      z-index: 2;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--green-light); }
+
+    /* Мобільна навігація */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 1rem 1.5rem;
+      background: rgba(30, 30, 30, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(243, 239, 230, 0.1);
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .mobile-logo, .mobile-contact {
+      font-size: 0.95rem; 
+      font-weight: 600;
+      color: var(--cream);
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .mobile-logo:hover, .mobile-contact:hover { color: var(--green-light); }
+    
+    .mobile-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    .burger {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .burger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--cream);
+      transition: all 0.3s;
+    }
+    .burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 5rem 1.5rem 2rem;
+      background: rgba(30, 30, 30, 0.95);
+      backdrop-filter: blur(15px);
+      z-index: 45;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+    .mobile-menu.active {
+      transform: translateY(0);
+    }
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--cream);
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--green-light); }
+
+    @media (max-width: 768px) {
+      .navbar { display: none; }
+      .mobile-nav { display: flex; }
+    }
+
+    /* ===== CASE STUDY LAYOUT ===== */
+    .chapter-dark {
+      background: var(--dark);
+      color: #F3EFE6;
+      padding: 6rem 1.5rem;
+    }
+    .chapter-cream {
+      background: var(--cream);
+      color: var(--dark);
+      padding: 6rem 1.5rem;
+    }
+
+    .text-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .image-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Case Title Section */
+    .case-header {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 14rem 1.5rem 2rem;
+    }
+
+    .case-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+      color: var(--cream-light);
+    }
+    
+    .case-subtitle {
+      font-size: clamp(1.15rem, 2.5vw, 1.35rem);
+      color: #d0d0d8; 
+      opacity: 0.7; 
+      margin-bottom: 3rem;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .case-description {
+      font-size: 1.1rem;
+      color: #d0d0d8;
+      margin-bottom: 3rem;
+      line-height: 1.8;
+    }
+
+    .case-meta {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      row-gap: 0.75rem;
+      column-gap: 1.5rem;
+      margin-bottom: 0; 
+    }
+    .case-meta dt {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      font-weight: 400;
+    }
+    .case-meta dd {
+      font-size: 0.95rem;
+      color: #d0d0d8;
+      line-height: 1.6;
+    }
+
+    /* Section Typography */
+    .case-section {
+      margin-bottom: 3rem;
+    }
+    .case-section:last-child {
+      margin-bottom: 0;
+    }
+    .case-section h2 {
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: var(--cream-light);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .chapter-cream .case-section h2 {
+      color: var(--dark);
+    }
+    
+    .case-section h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .chapter-cream .case-section h3 {
+      color: var(--dark);
+    }
+
+    .case-section p {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      margin-bottom: 1.25rem;
+      line-height: 1.8;
+    }
+    .chapter-cream .case-section p {
+      color: #333;
+    }
+    
+    .case-section ul {
+      list-style: none;
+      margin: 1rem 0 1.5rem 0;
+      padding: 0;
+    }
+    .case-section ul li {
+      font-size: 1.05rem;
+      color: #d0d0d8;
+      padding-left: 1.5rem;
+      position: relative;
+      margin-bottom: 0.6rem;
+      line-height: 1.7;
+    }
+    .chapter-cream .case-section ul li {
+      color: #333;
+    }
+    .case-section ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-weight: bold;
+    }
+    .case-section strong {
+      color: var(--cream-light);
+      font-weight: 600;
+    }
+    .chapter-cream .case-section strong {
+      color: var(--dark);
+    }
+
+    /* Image block inside chapters */
+    .chapter-image {
+      margin-top: 3rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chapter-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 0; 
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .chapter-image:hover img {
+      transform: scale(1.02);
+    }
+    .image-caption {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      text-align: left; 
+      margin-top: 1rem;
+      line-height: 1.5;
+      padding: 0 1rem;
+    }
+    .chapter-cream .image-caption {
+      color: #666;
+    }
+
+    /* Hero Image */
+    .hero-image-parallax {
+      width: 100%;
+      height: 105vh; 
+      position: relative;
+      overflow: hidden;
+      padding: 1.5rem;
+      background: var(--dark);
+    }
+    @media (min-width: 768px) {
+      .hero-image-parallax { padding: 3rem; }
+    }
+    .hero-image-parallax .img-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .hero-image-parallax:hover .img-wrapper {
+      transform: scale(1.02);
+    }
+    .hero-image-parallax .parallax-img {
+      position: absolute;
+      top: -15%;
+      left: 0;
+      width: 100%;
+      height: 130%;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+    }
+
+    /* Мобільна адаптація Hero Image */
+    @media (max-width: 767px) {
+      .hero-image-parallax {
+        height: auto;
+        padding: 0;
+        background: transparent;
+      }
+      .hero-image-parallax .img-wrapper {
+        height: auto;
+        aspect-ratio: 4/3;
+      }
+      .hero-image-parallax .parallax-img {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transform: none !important; /* Вимикаємо паралакс */
+      }
+    }
+
+    /* Specific Layouts (Problem & Principles) */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    @media (min-width: 640px) {
+      .problem-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .problem-card {
+      padding: 1.5rem;
+      border: 1px solid rgba(243, 239, 230, 0.15);
+      background: transparent;
+    }
+    .chapter-cream .problem-card {
+      border-color: rgba(30, 30, 30, 0.15);
+    }
+    .problem-card .num {
+      font-size: 1.5rem;
+      color: var(--green);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .problem-card h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-cream .problem-card h4 {
+      color: var(--dark);
+    }
+    .problem-card p {
+      font-size: 0.95rem;
+      color: #d0d0d8;
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+    .chapter-cream .problem-card p {
+      color: #333;
+    }
+
+    .principles-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    @media (min-width: 720px) {
+      .principles-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .principle-card {
+      padding: 1.5rem;
+      border: 1px solid rgba(243, 239, 230, 0.15);
+      background: transparent;
+    }
+    .chapter-cream .principle-card {
+      border-color: rgba(30, 30, 30, 0.15);
+    }
+    .principle-card .num {
+      font-size: 1.5rem;
+      color: var(--green);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+    .principle-card h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-cream .principle-card h4 {
+      color: var(--dark);
+    }
+    .principle-card p {
+      font-size: 0.95rem;
+      color: #d0d0d8;
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+    .chapter-cream .principle-card p {
+      color: #333;
+    }
+
+    /* Before / After */
+    .case-image-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 2rem auto 1rem;
+      max-width: 1200px;
+      padding: 0 1rem;
+    }
+    .case-image-pair .case-image {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .case-image-pair .case-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 0;
+      transition: transform 0.5s ease;
+    }
+    .case-image-pair .case-image:hover img {
+      transform: scale(1.02);
+    }
+    .case-image-pair .image-label {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      text-align: center;
+      margin-top: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+    @media (max-width: 640px) {
+      .case-image-pair {
+        grid-template-columns: 1fr;
+      }
+    }
+    .image-pair-caption {
+      font-size: 0.85rem;
+      color: #8a8a92;
+      text-align: center; 
+      margin-top: 0;
+      margin-bottom: 4rem;
+      padding: 0 1rem;
+      line-height: 1.5;
+    }
+
+    /* ===== NEXT CASES & BACK TO TOP ===== */
+    .bottom-cream-wrapper {
+      background: var(--dark);
+      padding: 8rem 1.5rem 6rem;
+      color: var(--cream);
+    }
+    
+    .next-cases-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .bottom-cream-wrapper h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--cream-light);
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    
+    .next-cases-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-bottom: 6rem;
+    }
+    @media (min-width: 768px) {
+      .next-cases-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .case-link {
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .case-link-img-wrapper {
+      width: 100%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      background: transparent; 
+    }
+    .case-link-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .case-link:hover .case-link-img-wrapper img {
+      transform: scale(1.05);
+    }
+    
+    .case-link-content {
+      padding: 1.5rem 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .case-link-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--cream-light);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+    
+    .case-link:hover .case-link-title {
+      color: var(--green-light);
+    }
+    
+    .case-link-sub {
+      font-size: 0.8rem;
+      color: #8a8a92;
+      margin-top: auto;
+    }
+
+    .back-to-top-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 6rem;
+    }
+    @media (max-width: 768px) { .back-to-top-container { margin-top: 3rem; } }
+    
+    .back-to-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--cream-light);
+      padding-bottom: 0.75rem;
+      border-bottom: 3px solid var(--cream-light);
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .back-to-top .icon { font-size: 1.5rem; transition: transform 0.3s; }
+    .back-to-top:hover { color: var(--green-light); border-color: var(--green-light); }
+    .back-to-top:hover .icon { transform: translate(4px, -4px); }
+
+    /* ===== CONTACTS ===== */
+    .contacts-wrapper {
+      background: var(--dark);
+      padding: 6rem 4rem 2rem;
+      border-top: 1px solid rgba(243, 239, 230, 0.1);
+    }
+    @media (max-width: 768px) { .contacts-wrapper { padding: 4rem 1.5rem 2rem; } }
+    
+    .contacts-inner { max-width: 1200px; margin: 0 auto; }
+
+    .contacts-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 3rem;
+    }
+
+    .contacts-top {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .contacts-top { flex-direction: row; justify-content: space-between; align-items: center; }
+    }
+
+    .email-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .email-link {
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: color 0.3s;
+    }
+    .email-link:hover { color: var(--green-light); }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px; height: 40px;
+      border-radius: 4px;
+      border: 1px solid rgba(243, 239, 230, 0.2);
+      color: var(--cream);
+      transition: all 0.3s;
+    }
+    .copy-btn:hover { background: var(--green); border-color: var(--green); color: var(--white); }
+    .copy-btn svg { width: 20px; height: 20px; }
+
+    .footer-thanks {
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      font-weight: 400;
+    }
+
+    .contacts-middle {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .contacts-middle { flex-direction: row; justify-content: space-between; align-items: center; }
+    }
+
+    .socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+    }
+    .socials a:hover { color: var(--green-light); }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .status .dot {
+      width: 8px;
+      height: 8px;
+      background: #3DA875;
+      border-radius: 50%;
+      animation: blinkGreen 1.5s infinite;
+    }
+    @keyframes blinkGreen {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .contacts-bottom {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(243, 239, 230, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: rgba(243, 239, 230, 0.5);
+    }
+    @media (min-width: 768px) {
+      .contacts-bottom { flex-direction: row; justify-content: space-between; }
+    }
+
+    /* ===== АНІМАЦІЇ ===== */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- DESKTOP NAV -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-logo">ILONA SEREDA</a>
+      <div class="nav-links">
+        <a href="index.html#work" class="nav-link">Projects</a>
+        <a href="index.html#about" class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact me</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav">
+    <a href="index.html" class="mobile-logo">ILONA SEREDA</a>
+    <div class="mobile-nav-right">
+      <a href="#contact" class="mobile-contact">Contact me</a>
+      <div class="burger" id="burgerBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#work" class="mobile-nav-link">Projects</a>
+    <a href="index.html#about" class="mobile-nav-link">About</a>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="chapter-dark" style="padding-bottom: 0;">
+    <div class="case-header">
+      <h1 class="case-title fade-in-up">Traxr: From a Cluttered Backlink Tool to a Clearer Decision-Making Workspace</h1>
+      <p class="case-subtitle fade-in-up">Reduced repetitive setup work through persistent filters and saved presets</p>
+      <p class="case-description fade-in-up">A redesign of a SaaS backlink monitoring platform for SEO specialists, agencies, and freelancers — from visual noise to clear, decision-ready information.</p>
+
+      <dl class="case-meta fade-in-up">
+        <dt>Role</dt>
+        <dd>Product Designer</dd>
+        <dt>Duration</dt>
+        <dd>SaaS Redesign</dd>
+        <dt>Team</dt>
+        <dd>Product Manager, Developers</dd>
+        <dt>Tools</dt>
+        <dd>Figma</dd>
+      </dl>
+    </div>
+  </header>
+
+  <!-- ===== HERO IMAGE ===== -->
+  <div class="hero-image-parallax fade-in-up" style="margin-bottom: 0;">
+    <div class="img-wrapper">
+      <div class="parallax-img" style="background-image: url('images/traxr/hero.webp');"></div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER: OVERVIEW ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Overview</h2>
+        <p><strong>Traxr</strong> is a SaaS platform for SEO specialists, agencies, and freelancers. It combines backlink monitoring with CRM and financial-management tools, helping users track links, manage deals, and understand where their budget is going.</p>
+        <p>The platform supports several day-to-day SEO workflows:</p>
+        <ul>
+          <li>Monitoring whether backlinks are live, lost, or indexed</li>
+          <li>Managing link-buying and link-selling activity</li>
+          <li>Recording pricing, contacts, and deal history</li>
+          <li>Tracking spend and evaluating return on investment</li>
+          <li>Automating link-to-domain matching and sending alerts when links are added or removed</li>
+        </ul>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/traxr/old-design-dashboard.webp" alt="Old Traxr dashboard - cluttered and visually noisy" loading="lazy" />
+        <p class="image-caption">The old dashboard: dozens of cards with equal weight, no clear priority, and too much visual noise.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: THE CHALLENGE & PROBLEMS ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>The challenge</h2>
+        <p>The original product was functional, but it made routine work feel harder than it needed to be. The interface looked dated, pages were visually crowded, and important information was difficult to scan quickly.</p>
+        <p>For SEO specialists, this matters. Backlink management often involves reviewing large amounts of data and acting on changes fast. The product needed to help users answer simple questions at a glance like "What changed?" or "Does anything need attention?"</p>
+        <p>A major competitor handled backlink data well through a clean, table-first interface. That became a useful reference point, not to copy, but to understand what Traxr needed to improve: a stronger data structure, clearer status signals, and less visual distraction.</p>
+      </div>
+
+      <div class="case-section">
+        <h2>Problems in the old experience</h2>
+        <div class="problem-grid">
+          <div class="problem-card">
+            <div class="num">01</div>
+            <h4>Too much visual noise</h4>
+            <p>Gradients, shadows, and inconsistent icon styles competed for attention. The product felt closer to an older admin dashboard than a modern SaaS tool.</p>
+          </div>
+          <div class="problem-card">
+            <div class="num">02</div>
+            <h4>Weak information hierarchy</h4>
+            <p>The dashboard used many cards with similar visual weight, making it hard to tell which metrics mattered most. On the Links page, dense tables and permanently visible filters made scanning more difficult.</p>
+          </div>
+          <div class="problem-card">
+            <div class="num">03</div>
+            <h4>Confusing navigation</h4>
+            <p>The sidebar contained many destinations without a clear sense of grouping or priority. Helpful items such as "How to use" and "Guided tour" felt disconnected from the main workflow.</p>
+          </div>
+          <div class="problem-card">
+            <div class="num">04</div>
+            <h4>Space was not used effectively</h4>
+            <p>Some pages contained large empty areas while charts and useful data were compressed, stretched, or difficult to compare.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/traxr/old-design.webp" alt="Old Traxr interface - visual analysis" loading="lazy" />
+        <p class="image-caption">The old interface: everything competing for attention at the same visual weight.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: DESIGN DIRECTION ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Design direction</h2>
+        <p>The redesign focused on reducing friction between data and action. Instead of showing everything at once, the interface gives priority to the information that helps users make the next decision.</p>
+        <p>Three principles guided the work:</p>
+
+        <div class="principles-grid">
+          <div class="principle-card">
+            <div class="num">01</div>
+            <h4>Prioritize information</h4>
+            <p>Surface important changes and metrics first; move secondary details deeper into the interface.</p>
+          </div>
+          <div class="principle-card">
+            <div class="num">02</div>
+            <h4>Keep users in context</h4>
+            <p>Use inline actions, modals, and slide-out panels instead of forcing users onto separate pages.</p>
+          </div>
+          <div class="principle-card">
+            <div class="num">03</div>
+            <h4>Support repeatable workflows</h4>
+            <p>Let users save filters and return to the same working view without rebuilding it every time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: DASHBOARD & LINKS ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Dashboard</h2>
+        <p>The new dashboard uses a quieter visual system: more whitespace, clearer typography, restrained color, and simple icons.</p>
+        <p>At the top, three KPI cards show the most important high-level metrics: total backlinks, daily updates, and total domains. This gives users an immediate sense of the account's current state before they move into more detailed analysis.</p>
+        <p>Below, charts for backlink growth, spending, and link activity are easier to read because the visual clutter has been removed. Legends are clearer, chart lines are easier to follow, and the page focuses on the metrics most likely to inform the next action.</p>
+        <p>Navigation was also reorganized so guidance tools are easier to find without competing with core product areas.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/traxr/new-dashboard.webp" alt="New dashboard - KPI focus" loading="lazy" />
+        <p class="image-caption">The new dashboard: three KPIs at the top, clear charts below, no visual noise.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: LINKS ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Links workspace</h2>
+        <p>The Links page was redesigned around a table-first structure, since reviewing and comparing backlink records is one of the platform's main jobs.</p>
+        <p>The table now organizes information into clearer columns:</p>
+        <ul>
+          <li>Source and linked page</li>
+          <li>Price</li>
+          <li>Domain rating</li>
+          <li>Technical attributes</li>
+          <li>First seen and last seen dates</li>
+          <li>Available actions</li>
+        </ul>
+        <p>Filters no longer occupy a large part of the screen by default. Instead, users open them only when needed through a single Filters button. This keeps the table visible and gives more room to review records.</p>
+        <p>Users can also view, edit, or delete a link directly from the table, reducing unnecessary page changes. Import, export, and "+ Add New" actions are placed where users expect to find them.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/traxr/new-links.webp" alt="New Links page - table layout" loading="lazy" />
+        <p class="image-caption">The new Links page: cleaner table, collapsed filters, inline actions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: FILTERING ===== -->
+  <section class="chapter-dark fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Filtering as a workflow</h2>
+        <p>In the old product, filtering took up too much space and remained open even when users were not actively using it. The redesigned version moves filters into a slide-out panel on the right.</p>
+        <p>Rather than presenting a long list of technical settings at once, options are grouped around how people think about their work:</p>
+        <ul>
+          <li><strong>Technical features:</strong> noindex, nofollow, sponsored, UGC, JavaScript rendering, and response-code issues</li>
+          <li><strong>Live link status</strong></li>
+          <li><strong>Subdomains</strong></li>
+          <li><strong>Date ranges</strong></li>
+          <li><strong>Link-following type</strong></li>
+          <li><strong>Domain rating</strong></li>
+        </ul>
+        <p>Accordion sections keep the panel manageable, while saved filter presets make repeated tasks much faster. For example, someone who regularly checks noindex links added during the past week can save that view instead of rebuilding it every time.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="chapter-image">
+        <img src="images/traxr/filters.webp" alt="Filters - slide-out panel with accordion groups" loading="lazy" />
+        <p class="image-caption">The new filter: a slide-out panel with accordion groups and saved presets.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHAPTER: OUTCOME ===== -->
+  <section class="chapter-cream fade-in-up">
+    <div class="text-container">
+      <div class="case-section">
+        <h2>Outcome</h2>
+        <p>The redesign turned Traxr from a tool that mainly displayed data into one that better supports decisions.</p>
+        <p>The new interface makes important states easier to spot, keeps users in the same workflow while they take action, and reduces repetitive setup work through persistent filters and saved presets. Instead of treating every data point as equally important, the experience helps users focus on what has changed and what deserves attention next.</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <div class="case-image-pair">
+        <div class="case-image">
+          <img src="images/traxr/outcome-before.webp" alt="Traxr before redesign" loading="lazy" />
+          <span class="image-label">Before</span>
+        </div>
+        <div class="case-image">
+          <img src="images/traxr/outcome-after.webp" alt="Traxr after redesign" loading="lazy" />
+          <span class="image-label">After</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NEXT CASES & BACK TO TOP ===== -->
+  <div class="bottom-cream-wrapper fade-in-up">
+    <div class="next-cases-inner">
+      <h3>Next cases</h3>
+      <div class="next-cases-grid">
+        
+        <a href="case-wellness-onboarding.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case1-cover.webp" alt="Wellness Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Building Trust Early in a Wellness Onboarding</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+        
+        <a href="case-hrms-redesign.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case2-cover.webp" alt="HRMS Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">From a Browser Extension to an HRMS: Helping Recruiters Work Faster</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+
+        <a href="case-fementity-community.html" class="case-link">
+          <div class="case-link-img-wrapper">
+            <img src="images/case4-cover.webp" alt="FemEntity Community Preview" loading="lazy" />
+          </div>
+          <div class="case-link-content">
+            <div class="case-link-title">Designing a Safe & Engaging Community Experience for FemEntity</div>
+            <div class="case-link-sub">Case Study</div>
+          </div>
+        </a>
+
+      </div>
+      
+      <div class="back-to-top-container">
+        <a href="#" class="back-to-top" id="backToTop">
+          Back to the top
+          <span class="icon">↑</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACTS -->
+  <section class="contacts-wrapper" id="contact">
+    <div class="contacts-inner">
+      <h2 class="contacts-title">Contact me</h2>
+
+      <div class="contacts-top">
+        <div class="email-container">
+          <a href="mailto:ilonaseredawork@gmail.com" class="email-link" id="emailLink">ilonaseredawork@gmail.com</a>
+          <button class="copy-btn" id="copyBtn" title="Copy email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="footer-thanks">Dyakuyu (Дякую) which means "Thank you" in Ukrainian</div>
+      </div>
+
+      <div class="contacts-middle">
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/ilonasereda/" target="_blank">LinkedIn</a>
+          <a href="https://www.behance.net/ilonasereda" target="_blank">Behance</a>
+          <a href="https://dribbble.com/ilonasereda" target="_blank">Dribbble</a>
+          <a href="https://ixdf.org/members/ilona-3?r=ilona-3" target="_blank">IxDF</a>
+        </div>
+        
+        <div class="status">
+          <span class="dot"></span>
+          Available for projects
+        </div>
+      </div>
+
+      <div class="contacts-bottom">
+        <div>Designed and built with love by Ilona Sereda</div>
+        <div>Portugal, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ===== PROGRESS BAR =====
+    const progressBar = document.getElementById('progressBar');
+    
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      progressBar.style.width = scrolled + "%";
+    });
+
+    // ===== МОБІЛЬНЕ МЕНЮ =====
+    const burgerBtn = document.getElementById('burgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+    burgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+      burgerBtn.classList.toggle('active');
+    });
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        burgerBtn.classList.remove('active');
+      });
+    });
+
+    // ===== COPY EMAIL =====
+    const copyBtn = document.getElementById('copyBtn');
+    const emailLink = document.getElementById('emailLink');
+    const emailToCopy = "ilonaseredawork@gmail.com";
+
+    function copyEmail() {
+      navigator.clipboard.writeText(emailToCopy).then(() => {
+        const originalHTML = copyBtn.innerHTML;
+        copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        copyBtn.style.color = '#4ade80';
+        
+        setTimeout(() => {
+          copyBtn.innerHTML = originalHTML;
+          copyBtn.style.color = 'var(--cream)';
+        }, 2000);
+      });
+    }
+
+    copyBtn.addEventListener('click', copyEmail);
+    emailLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      copyEmail();
+    });
+
+    // ===== GSAP АНІМАЦІЇ =====
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray(".fade-in-up").forEach(function(el) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" }
+        }
+      );
+    });
+
+    // Паралакс для Hero (тільки на десктопі)
+    let mm = gsap.matchMedia();
+    mm.add("(min-width: 768px)", () => {
+      gsap.fromTo(".hero-image-parallax .parallax-img", 
+        { y: "-10%" },
+        {
+          y: "10%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-image-parallax",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        }
+      );
+    });
+
+    // Smooth scroll for Back to Top
+    document.getElementById('backToTop').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
