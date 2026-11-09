@@ -22,14 +22,14 @@
       color: #F3EFE6;
       line-height: 1.7;
       overflow-x: hidden;
-      cursor: none;
     }
-    a { text-decoration: none; color: inherit; cursor: none; }
-    button { cursor: none; font-family: inherit; border: none; background: none; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; border: none; background: none; }
 
     :root {
       --red: #C33C20;
       --green: #275441;
+      --green-light: #4A8E70; /* Світліший зелений для ховерів */
       --dark: #1E1E1E;
       --cream: #F3EFE6;
       --white: #FBFAFA;
@@ -51,120 +51,139 @@
       transition: width 0.1s ease-out, background-color 0.3s ease;
     }
 
-    /* ===== КАСТОМНИЙ КУРСОР ===== */
-    .custom-cursor {
-      position: fixed;
-      top: 0; left: 0;
-      width: 20px; height: 20px;
-      background-color: var(--red);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10000;
-      transform: translate(-50%, -50%);
-      transition: width 0.3s, height 0.3s;
-      mix-blend-mode: difference; 
-    }
-    .custom-cursor.hovering {
-      width: 50px; height: 50px;
-    }
-
     /* ===== NAVBAR ===== */
     .navbar {
       position: fixed;
-      top: 3rem;
+      top: 2rem;
       left: 0; right: 0;
       z-index: 50;
       display: flex;
-      align-items: center;
+      justify-content: center;
       padding: 0 2rem;
       pointer-events: none;
     }
+    
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1400px;
+      padding: 1rem 2.5rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(243, 239, 230, 0.1);
+      background: rgba(30, 30, 30, 0.6);
+      pointer-events: auto;
+    }
+    
     .nav-logo {
-      position: absolute;
-      left: 2rem;
-      top: -100vh; 
       font-size: 1.1rem;
       font-weight: 700;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       color: var(--cream);
-      pointer-events: auto;
+      transition: color 0.3s;
       z-index: 2;
     }
+    .nav-logo:hover { color: var(--green-light); }
     
-    .nav-pill-wrap {
-      position: absolute;
-      left: 0; right: 0;
-      display: flex;
-      justify-content: center;
-      pointer-events: none;
-    }
-    
-    .nav-pill {
-      position: relative;
+    .nav-links {
       display: flex;
       align-items: center;
-      gap: 1.75rem;
-      padding: 0.9rem 2rem;
-      pointer-events: auto;
+      gap: 2rem;
     }
-    .nav-pill::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      background: rgba(30, 30, 30, 0.6);
-      border: 1px solid rgba(243, 239, 230, 0.2);
-      border-radius: 9999px;
-      backdrop-filter: blur(10px);
-    }
-
-    .nav-cursor {
-      position: fixed;
-      top: 0; left: 0;
-      width: 20px; height: 20px;
-      background-color: var(--green);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0;
-      transition: width 0.3s, height 0.3s, opacity 0.2s;
-    }
-    body.nav-hover .nav-cursor { width: 60px; height: 60px; opacity: 1; }
-    body.nav-hover .custom-cursor { opacity: 0; }
-    .custom-cursor { transition: width 0.3s, height 0.3s, opacity 0.2s; }
     
     .nav-link {
       position: relative;
       font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cream);
+      transition: color 0.3s;
+      z-index: 2;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--green-light); }
+
+    /* Мобільна навігація */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 1rem 1.5rem;
+      background: rgba(30, 30, 30, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(243, 239, 230, 0.1);
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .mobile-logo, .mobile-contact {
+      font-size: 0.95rem; 
+      font-weight: 600;
+      color: var(--cream);
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .mobile-logo:hover, .mobile-contact:hover { color: var(--green-light); }
+    
+    .mobile-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    .burger {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .burger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--cream);
+      transition: all 0.3s;
+    }
+    .burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 5rem 1.5rem 2rem;
+      background: rgba(30, 30, 30, 0.95);
+      backdrop-filter: blur(15px);
+      z-index: 45;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+    .mobile-menu.active {
+      transform: translateY(0);
+    }
+    .mobile-menu a {
+      font-size: 1.1rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0;
       color: var(--cream);
-      z-index: 2;
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--green-light); }
+
+    @media (max-width: 768px) {
+      .navbar { display: none; }
+      .mobile-nav { display: flex; }
     }
 
-    .nav-divider {
-      width: 1px;
-      height: 1.5rem;
-      background: rgba(243, 239, 230, 0.2);
-      margin: 0;
-    }
-
-    .logo-scroll-area {
-      position: absolute;
-      top: 2rem;
-      left: 2rem;
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--cream);
-      z-index: 51;
-    }
-
-    /* ===== HERO (Перший блок) ===== */
+    /* ===== HERO ===== */
     .hero {
       height: 100vh;
       display: flex;
@@ -176,10 +195,7 @@
       background: var(--dark);
     }
 
-    .page-wrap {
-      position: relative;
-      overflow: hidden;
-    }
+    .page-wrap { position: relative; overflow: hidden; }
 
     .hero-circle {
       position: absolute;
@@ -193,6 +209,16 @@
       pointer-events: none;
     }
 
+    @media (max-width: 768px) {
+      .hero-circle { 
+        left: auto; 
+        right: -30vw; 
+        width: 120vw; 
+        height: 120vw; 
+        top: 40vh; 
+      }
+    }
+
     .hero-content {
       position: relative;
       z-index: 3;
@@ -200,7 +226,7 @@
     }
 
     .hero h1 {
-      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-size: clamp(2.5rem, 7vw, 6.5rem);
       font-weight: 700;
       line-height: 1.05;
       margin-bottom: 2rem;
@@ -209,7 +235,7 @@
     }
     
     .hero .subtitle {
-      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      font-size: clamp(1rem, 2vw, 1.4rem);
       color: var(--cream);
       margin-bottom: 3rem;
       opacity: 0.9;
@@ -258,7 +284,7 @@
       100% { transform: translateY(100%); }
     }
 
-    /* ===== WORKS (Другий блок) ===== */
+    /* ===== WORKS ===== */
     .section-cream {
       background: var(--cream);
       color: var(--dark);
@@ -278,6 +304,12 @@
       font-weight: 700;
       margin-bottom: 4rem;
       color: var(--dark);
+      text-transform: none;
+    }
+    
+    @media (max-width: 768px) {
+      .section-cream { padding: 12rem 1.5rem 4rem; }
+      .section-title { margin-bottom: 2rem; text-align: left; }
     }
     
     @keyframes blinkGreenText {
@@ -296,10 +328,11 @@
       align-items: start;
     }
     @media (min-width: 768px) {
-      .works-grid {
-        grid-template-columns: 1.2fr 1fr; 
-        gap: 4rem;
-      }
+      .works-grid { grid-template-columns: 1.2fr 1fr; gap: 4rem; }
+    }
+    
+    @media (max-width: 768px) {
+      .works-grid { display: flex; flex-direction: column; gap: 2rem; }
     }
 
     .work-card {
@@ -340,6 +373,16 @@
       font-weight: 600;
       line-height: 1.2;
     }
+    
+    @media (max-width: 768px) {
+      .work-card { width: 100%; padding: 0; }
+      .work-card .card-title { font-size: 1.25rem; }
+      .work-card .image-wrap { aspect-ratio: 4/3; width: 100%; }
+      .work-card:nth-child(2) { margin-top: 0; }
+      .work-card:nth-child(3) { margin-top: 0; }
+      .work-card:nth-child(4) { margin-top: 0; }
+    }
+
     .work-card .card-tags {
       display: flex;
       flex-wrap: wrap;
@@ -358,12 +401,10 @@
       .work-card:nth-child(4) { margin-top: 4rem; }
     }
 
-    /* ===== LINK BUTTON (Як на Behance) ===== */
-    .link-btn-wrap {
-      display: flex;
-      justify-content: center;
-      margin-top: 6rem;
-    }
+    /* LINK BUTTON */
+    .link-btn-wrap { display: flex; justify-content: center; margin-top: 6rem; }
+    @media (max-width: 768px) { .link-btn-wrap { margin-top: 3rem; } }
+
     .link-btn {
       display: inline-flex;
       align-items: center;
@@ -376,17 +417,9 @@
       border-bottom: 3px solid var(--dark);
       transition: color 0.3s, border-color 0.3s;
     }
-    .link-btn .icon {
-      font-size: 1.5rem;
-      transition: transform 0.3s;
-    }
-    .link-btn:hover {
-      color: var(--green);
-      border-color: var(--green);
-    }
-    .link-btn:hover .icon {
-      transform: translate(4px, -4px);
-    }
+    .link-btn .icon { font-size: 1.5rem; transition: transform 0.3s; }
+    .link-btn:hover { color: var(--green); border-color: var(--green); }
+    .link-btn:hover .icon { transform: translate(4px, -4px); }
 
     /* ===== VISUAL PLAYGROUND ===== */
     .section-playground {
@@ -394,6 +427,10 @@
       color: var(--dark);
       padding: 4rem 4rem 8rem;
       position: relative;
+    }
+    
+    @media (max-width: 768px) {
+      .section-playground { padding: 2rem 1.5rem 4rem; }
     }
 
     .playground-inner {
@@ -405,21 +442,33 @@
     @media (min-width: 900px) {
       .playground-inner { grid-template-columns: 1fr 1fr 1fr; }
     }
+    
     .playground-side {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
+
+    @media (max-width: 899px) {
+      .playground-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      .playground-side {
+        width: 100%;
+        gap: 1rem;
+      }
+    }
+    
     .playground-card {
       aspect-ratio: 1/1;
-      /* Прибрано чорну обводку за замовчуванням */
       border: 2px solid transparent;
       overflow: hidden;
       transition: all 0.3s;
       background: #e0dcd3;
       padding: 0;
     }
-    /* Зелена обводка при ховері */
     .playground-card:hover {
       border-color: var(--green);
       transform: scale(1.05);
@@ -429,24 +478,24 @@
       object-fit: cover;
       transition: transform 0.5s;
     }
-    .playground-card:hover img {
-      transform: scale(1.1);
-    }
+    .playground-card:hover img { transform: scale(1.1); }
+
     .playground-center {
       text-align: center;
       padding: 2rem;
     }
+    
     .playground-center h2 {
       font-size: 3rem;
       font-weight: 700;
-      text-transform: uppercase;
       line-height: 1;
       margin-bottom: 1rem;
       color: var(--dark);
+      text-transform: none;
     }
-    .playground-center h2 span {
-      display: block;
-    }
+    @media (max-width: 768px) { .playground-center h2 { font-size: 2rem; } }
+    
+    .playground-center h2 span { display: block; }
     .playground-center p {
       font-size: 1rem;
       color: #444;
@@ -460,11 +509,52 @@
       text-transform: uppercase;
       transition: background 0.3s;
     }
-    .playground-center .btn:hover {
-      background: var(--green);
+    .playground-center .btn:hover { background: var(--green-light); color: var(--dark); }
+
+    /* Мобільні заголовки та кнопки для Playground */
+    .mobile-playground-header, .mobile-playground-btn {
+      display: none;
+    }
+    @media (max-width: 899px) {
+      .mobile-playground-header {
+        display: block;
+        text-align: left;
+        margin-bottom: 2rem;
+      }
+      .mobile-playground-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+        color: var(--dark);
+        text-transform: none;
+      }
+      .mobile-playground-header p {
+        font-size: 1rem;
+        color: #444;
+        margin-bottom: 0;
+      }
+      .desktop-playground-center {
+        display: none;
+      }
+      .mobile-playground-btn {
+        display: block;
+        margin-top: 2rem;
+      }
+      .mobile-playground-btn .btn {
+        display: block;
+        text-align: center;
+        background: var(--dark);
+        color: var(--cream);
+        padding: 1.25rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: background 0.3s;
+      }
+      .mobile-playground-btn .btn:hover { background: var(--green-light); color: var(--dark); }
     }
 
-    /* ===== ABOUT (темний блок) ===== */
+    /* ===== ABOUT ===== */
     .section-dark {
       background: var(--dark);
       color: var(--cream);
@@ -472,6 +562,8 @@
       position: relative;
       overflow: hidden;
     }
+    @media (max-width: 768px) { .section-dark { padding: 4rem 1.5rem; } }
+    
     .section-dark .section-title { color: var(--cream); }
 
     .about-grid {
@@ -482,6 +574,10 @@
     }
     @media (min-width: 900px) {
       .about-grid { grid-template-columns: 1.2fr 1fr; }
+    }
+    
+    @media (max-width: 899px) {
+      .about-grid { display: flex; flex-direction: column-reverse; gap: 2rem; }
     }
 
     .about-text p {
@@ -508,7 +604,6 @@
       display: block;
     }
 
-    /* Кнопка More about me (у стилі Behance) */
     .more-about-btn {
       display: inline-flex;
       align-items: center;
@@ -522,76 +617,81 @@
       transition: color 0.3s, border-color 0.3s;
       margin-top: 2rem;
     }
-    .more-about-btn .icon {
-      font-size: 1.25rem;
-      transition: transform 0.3s;
-    }
-    .more-about-btn:hover {
-      color: var(--green);
-      border-color: var(--green);
-    }
-    .more-about-btn:hover .icon {
-      transform: translate(4px, -4px);
-    }
+    .more-about-btn .icon { font-size: 1.25rem; transition: transform 0.3s; }
+    .more-about-btn:hover { color: var(--green-light); border-color: var(--green-light); }
+    .more-about-btn:hover .icon { transform: translate(4px, -4px); }
 
-    @media (max-width: 767px) {
-      .section-dark { padding: 5rem 1.5rem; }
-      .section-playground { padding: 4rem 1.5rem 8rem; }
-    }
-
-    /* ===== FOOTER ===== */
-    footer {
+    /* ===== CONTACTS ===== */
+    .contacts-wrapper {
       background: var(--dark);
-      color: var(--cream);
       padding: 6rem 4rem 2rem;
       border-top: 1px solid rgba(243, 239, 230, 0.1);
     }
+    @media (max-width: 768px) { .contacts-wrapper { padding: 4rem 1.5rem 2rem; } }
     
-    .footer-top {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 4rem;
-    }
-    @media (min-width: 768px) {
-      .footer-top {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-      }
+    .contacts-inner { max-width: 1200px; margin: 0 auto; }
+
+    .contacts-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 3rem;
     }
 
-    .email-link {
-      font-size: clamp(1rem, 1.5vw, 1.2rem);
-      font-weight: 500;
-      text-decoration: underline;
-      text-underline-offset: 4px;
-      transition: color 0.3s;
-    }
-    .email-link:hover {
-      color: var(--green);
-    }
-
-    .footer-thanks {
-      font-size: clamp(1rem, 1.5vw, 1.2rem);
-      font-weight: 400;
-    }
-
-    .footer-middle {
+    .contacts-top {
       display: flex;
       flex-direction: column;
       gap: 2rem;
       margin-bottom: 4rem;
     }
     @media (min-width: 768px) {
-      .footer-middle {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-      }
+      .contacts-top { flex-direction: row; justify-content: space-between; align-items: center; }
     }
 
-    footer .socials {
+    .email-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .email-link {
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: color 0.3s;
+    }
+    .email-link:hover { color: var(--green-light); }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px; height: 40px;
+      border-radius: 4px;
+      border: 1px solid rgba(243, 239, 230, 0.2);
+      color: var(--cream);
+      transition: all 0.3s;
+    }
+    .copy-btn:hover { background: var(--green); border-color: var(--green); color: var(--white); }
+    .copy-btn svg { width: 20px; height: 20px; }
+
+    .footer-thanks {
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      font-weight: 400;
+    }
+
+    .contacts-middle {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (min-width: 768px) {
+      .contacts-middle { flex-direction: row; justify-content: space-between; align-items: center; }
+    }
+
+    .socials {
       display: flex;
       flex-wrap: wrap;
       gap: 2rem;
@@ -600,11 +700,9 @@
       letter-spacing: 0.1em;
       font-weight: 500;
     }
-    footer .socials a:hover {
-      color: var(--green);
-    }
+    .socials a:hover { color: var(--green-light); }
     
-    footer .status {
+    .status {
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -612,7 +710,7 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
-    footer .status .dot {
+    .status .dot {
       width: 8px;
       height: 8px;
       background: #3DA875;
@@ -624,7 +722,7 @@
       50% { opacity: 0.2; }
     }
 
-    .footer-bottom {
+    .contacts-bottom {
       margin-top: 4rem;
       padding-top: 2rem;
       border-top: 1px solid rgba(243, 239, 230, 0.1);
@@ -635,10 +733,7 @@
       color: rgba(243, 239, 230, 0.5);
     }
     @media (min-width: 768px) {
-      .footer-bottom {
-        flex-direction: row;
-        justify-content: space-between;
-      }
+      .contacts-bottom { flex-direction: row; justify-content: space-between; }
     }
 
     /* ===== LIGHTBOX / GALLERY ===== */
@@ -655,10 +750,8 @@
       pointer-events: none;
       transition: opacity 0.3s ease;
     }
-    .lightbox.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .lightbox.open { opacity: 1; pointer-events: auto; }
+    
     .lightbox-img-container {
       max-width: 90vw;
       max-height: 90vh;
@@ -673,11 +766,8 @@
       transform: scale(0.95);
       transition: transform 0.3s ease;
     }
-    .lightbox.open .lightbox-img-container img {
-      transform: scale(1);
-    }
+    .lightbox.open .lightbox-img-container img { transform: scale(1); }
     
-    /* Кнопки керування */
     .lightbox-close {
       position: absolute;
       top: 2rem; right: 2rem;
@@ -687,9 +777,7 @@
       transition: color 0.3s;
       z-index: 10;
     }
-    .lightbox-close:hover {
-      color: var(--red);
-    }
+    .lightbox-close:hover { color: var(--green-light); }
     
     .lightbox-nav {
       position: absolute;
@@ -703,10 +791,7 @@
       z-index: 10;
       user-select: none;
     }
-    .lightbox-nav:hover {
-      color: var(--red);
-      transform: translateY(-50%) scale(1.1);
-    }
+    .lightbox-nav:hover { color: var(--green-light); transform: translateY(-50%) scale(1.1); }
     .lightbox-prev { left: 2rem; }
     .lightbox-next { right: 2rem; }
 
@@ -723,35 +808,45 @@
     <div class="progress-bar" id="progressBar"></div>
   </div>
 
-  <div class="custom-cursor" id="cursor"></div>
-
-  <!-- NAVBAR -->
+  <!-- DESKTOP NAV -->
   <nav class="navbar">
-    <div class="nav-cursor" id="navCursor"></div>
-    <a href="index.html" class="nav-logo">ILONA SEREDA</a>
-    <div class="nav-pill-wrap">
-      <div class="nav-pill">
-        <a href="#home" class="nav-link">Home</a>
-        <a href="#work" class="nav-link">Work</a>
-        <a href="about.html" class="nav-link">About</a> <!-- Змінено на about.html -->
-        <div class="nav-divider"></div>
-        <a href="mailto:ilonaseredawork@gmail.com" class="nav-link">Say hi ↗</a>
+    <div class="navbar-inner">
+      <a href="#home" class="nav-logo">ILONA SEREDA</a>
+      <div class="nav-links">
+        <a href="#work" class="nav-link">Projects</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact me</a>
       </div>
     </div>
   </nav>
 
-  <div class="page-wrap">
-  <!-- Логотип, який скролиться -->
-  <div class="logo-scroll-area">ILONA SEREDA</div>
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav">
+    <a href="#home" class="mobile-logo">ILONA SEREDA</a>
+    <div class="mobile-nav-right">
+      <a href="#contact" class="mobile-contact">Contact me</a>
+      <div class="burger" id="burgerBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
 
-  <!-- Коло -->
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#work" class="mobile-nav-link">Projects</a>
+    <a href="#about" class="mobile-nav-link">About</a>
+  </div>
+
+  <div class="page-wrap">
   <div class="hero-circle" id="heroCircle"></div>
 
   <!-- HERO -->
   <section class="hero" id="home">
     <div class="hero-content">
       <h1>Designing for<br>people, with AI as<br>my co-pilot</h1>
-      <p class="subtitle">Senior Product Designer based in Portugal. 5+ years across HR tech, FinTech, and Health & Wellness.</p>
+      <p class="subtitle">Senior Product Designer based in Portugal. 5+ years across HR tech, FinTech, and Health & Wellness</p>
     </div>
     
     <div class="scroll-indicator">
@@ -779,7 +874,7 @@
         <a href="case-hrms-redesign.html" class="work-card">
           <div class="image-wrap"><img src="images/case2-cover.webp" alt="HRMS" class="image" /></div>
           <div class="card-meta">
-            <h3 class="card-title">Redesigning HRMS for Better Talent Management</h3>
+            <h3 class="card-title">From a Browser Extension to an HRMS: Helping Recruiters Work Faster</h3>
             <div class="card-tags"><span>UX Research</span> <span>HR Tech</span> <span>B2B</span></div>
           </div>
         </a>
@@ -788,7 +883,7 @@
         <a href="case-traxr.html" class="work-card">
           <div class="image-wrap"><img src="images/case3-cover.webp" alt="Traxr" class="image" /></div>
           <div class="card-meta">
-            <h3 class="card-title">Traxr: Decision-Making Engine</h3>
+            <h3 class="card-title">Traxr: From a Cluttered Backlink Tool to a Clearer Decision-Making Workspace</h3>
             <div class="card-tags"><span>SaaS Redesign</span> <span>Data Viz</span></div>
           </div>
         </a>
@@ -797,13 +892,12 @@
         <a href="case-fementity-community.html" class="work-card">
           <div class="image-wrap"><img src="images/case4-cover.webp" alt="FemEntity" class="image" /></div>
           <div class="card-meta">
-            <h3 class="card-title">Safe & Engaging Community Experience</h3>
+            <h3 class="card-title">Designing a Safe & Engaging Community Experience for FemEntity</h3>
             <div class="card-tags"><span>Community Design</span> <span>Mobile App</span></div>
           </div>
         </a>
       </div>
 
-      <!-- Кнопка See more on Behance -->
       <div class="link-btn-wrap">
         <a href="https://www.behance.net/ilonasereda" target="_blank" class="link-btn">
           See more on Behance
@@ -818,7 +912,16 @@
   <!-- VISUAL PLAYGROUND -->
   <section class="section-playground" id="playground">
     <div class="container">
+      
+      <!-- Мобільний заголовок -->
+      <div class="mobile-playground-header">
+        <h2>Visual Playground</h2>
+        <p>Side projects, visual studies, and experiments that don't fit in a case study.</p>
+      </div>
+
       <div class="playground-inner">
+        
+        <!-- Ліва колонка карток -->
         <div class="playground-side">
           <button class="playground-card gallery-item" data-src="images/playground-1.png"><img src="images/playground-1.png" alt="Play 1" /></button>
           <button class="playground-card gallery-item" data-src="images/playground-2.png"><img src="images/playground-2.png" alt="Play 2" /></button>
@@ -826,19 +929,28 @@
           <button class="playground-card gallery-item" data-src="images/playground-4.png"><img src="images/playground-4.png" alt="Play 4" /></button>
         </div>
 
-        <div class="playground-center">
+        <!-- Центральна частина (десктоп) -->
+        <div class="playground-center desktop-playground-center">
           <h2><span>Visual</span><span>Playground</span></h2>
           <p>Side projects, visual studies, and experiments that don't fit in a case study.</p>
-          <a href="https://dribbble.com/ilonasereda" target="_blank" class="btn">Dribbble →</a>
+          <a href="https://dribbble.com/ilonasereda" target="_blank" class="btn">Visit Dribbble →</a>
         </div>
 
+        <!-- Права колонка карток -->
         <div class="playground-side">
           <button class="playground-card gallery-item" data-src="images/playground-5.png"><img src="images/playground-5.png" alt="Play 5" /></button>
           <button class="playground-card gallery-item" data-src="images/playground-6.png"><img src="images/playground-6.png" alt="Play 6" /></button>
           <button class="playground-card gallery-item" data-src="images/playground-7.png"><img src="images/playground-7.png" alt="Play 7" /></button>
           <button class="playground-card gallery-item" data-src="images/playground-8.png"><img src="images/playground-8.png" alt="Play 8" /></button>
         </div>
+
       </div>
+      
+      <!-- Мобільна кнопка (одна) -->
+      <div class="mobile-playground-btn">
+        <a href="https://dribbble.com/ilonasereda" target="_blank" class="btn">Visit Dribbble →</a>
+      </div>
+
     </div>
   </section>
 
@@ -849,10 +961,9 @@
 
       <div class="about-grid">
         <div class="about-text">
-          <p>Hello! I’m Ilona, a Product and UX/UI Designer. Originally from Ukraine, I created this portfolio inspired by the artwork of Heorhiy Narbut, a Ukrainian graphic designer who represents Art Nouveau.</p>
+          <p>Hello! I’m Ilona, a Product and UX/UI Designer. Originally from Ukraine, I lived in Montreal, Canada (Oui, je parle français), and now I live in Portugal (Estou a aprender português).</p>
           <p>As a designer, I enjoy combining visual design with user experience and research, making AI my co-pilot while keeping the human at the center of the design process.</p>
           
-          <!-- Кнопка More about me у стилі Behance -->
           <a href="about.html" class="more-about-btn">
             More about me
             <span class="icon">↗</span>
@@ -867,15 +978,25 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="container">
-      <div class="footer-top">
-        <a href="mailto:ilonaseredawork@gmail.com" class="email-link">ilonaseredawork@gmail.com</a>
+  <!-- CONTACTS -->
+  <section class="contacts-wrapper" id="contact">
+    <div class="contacts-inner">
+      <h2 class="contacts-title">Contact me</h2>
+
+      <div class="contacts-top">
+        <div class="email-container">
+          <a href="mailto:ilonaseredawork@gmail.com" class="email-link" id="emailLink">ilonaseredawork@gmail.com</a>
+          <button class="copy-btn" id="copyBtn" title="Copy email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
         <div class="footer-thanks">Dyakuyu (Дякую) which means "Thank you" in Ukrainian</div>
       </div>
 
-      <div class="footer-middle">
+      <div class="contacts-middle">
         <div class="socials">
           <a href="https://www.linkedin.com/in/ilonasereda/" target="_blank">LinkedIn</a>
           <a href="https://www.behance.net/ilonasereda" target="_blank">Behance</a>
@@ -889,12 +1010,12 @@
         </div>
       </div>
 
-      <div class="footer-bottom">
+      <div class="contacts-bottom">
         <div>Designed and built with love by Ilona Sereda</div>
         <div>Portugal, 2026</div>
       </div>
     </div>
-  </footer>
+  </section>
 
   <!-- LIGHTBOX (GALLERY MODAL) -->
   <div class="lightbox" id="lightbox">
@@ -907,10 +1028,8 @@
   </div>
 
   <script>
-    // ===== PROGRESS BAR & COLOR CHANGE =====
+    // ===== PROGRESS BAR =====
     const progressBar = document.getElementById('progressBar');
-    const sections = document.querySelectorAll('section, footer');
-    
     window.addEventListener('scroll', () => {
       const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -918,36 +1037,45 @@
       progressBar.style.width = scrolled + "%";
     });
 
-    // ===== КАСТОМНИЙ КУРСОР =====
-    const cursor = document.getElementById('cursor');
-    const navCursor = document.getElementById('navCursor');
-    let mouseX = 0, mouseY = 0;
-    let cursorX = 0, cursorY = 0;
-    const speed = 0.15;
+    // ===== МОБІЛЬНЕ МЕНЮ =====
+    const burgerBtn = document.getElementById('burgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
 
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+    burgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+      burgerBtn.classList.toggle('active');
     });
 
-    function animateCursor() {
-      cursorX += (mouseX - cursorX) * speed;
-      cursorY += (mouseY - cursorY) * speed;
-      const t = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
-      cursor.style.transform = t;
-      navCursor.style.transform = t;
-      requestAnimationFrame(animateCursor);
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        burgerBtn.classList.remove('active');
+      });
+    });
+
+    // ===== COPY EMAIL =====
+    const copyBtn = document.getElementById('copyBtn');
+    const emailLink = document.getElementById('emailLink');
+    const emailToCopy = "ilonaseredawork@gmail.com";
+
+    function copyEmail() {
+      navigator.clipboard.writeText(emailToCopy).then(() => {
+        const originalHTML = copyBtn.innerHTML;
+        copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        copyBtn.style.color = '#4ade80';
+        
+        setTimeout(() => {
+          copyBtn.innerHTML = originalHTML;
+          copyBtn.style.color = 'var(--cream)';
+        }, 2000);
+      });
     }
-    animateCursor();
 
-    document.querySelectorAll('.nav-logo, .nav-link').forEach(el => {
-      el.addEventListener('mouseenter', () => document.body.classList.add('nav-hover'));
-      el.addEventListener('mouseleave', () => document.body.classList.remove('nav-hover'));
-    });
-
-    document.querySelectorAll('a, button, .work-card, .shape, .playground-card').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    copyBtn.addEventListener('click', copyEmail);
+    emailLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      copyEmail();
     });
 
     // ===== LIGHTBOX (GALLERY) LOGIC =====
@@ -979,42 +1107,24 @@
       lightboxImg.src = galleryItems[currentIndex].getAttribute('data-src');
     }
 
-    // Відкриття при кліку
     galleryItems.forEach((item, index) => {
       item.addEventListener('click', () => openLightbox(index));
     });
 
-    // Закриття
     lightboxClose.addEventListener('click', closeLightbox);
     lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox) closeLightbox();
     });
 
-    // Гортання
     lightboxNext.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
     lightboxPrev.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
 
-    // Клавіатура
     document.addEventListener('keydown', (e) => {
       if (!lightbox.classList.contains('open')) return;
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowRight') showNext();
       if (e.key === 'ArrowLeft') showPrev();
     });
-
-    // ===== GSAP АНІМАЦІЇ =====
-    gsap.registerPlugin(ScrollTrigger);
-
-    gsap.utils.toArray(".fade-in-up").forEach(function(el) {
-      gsap.fromTo(el,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1, y: 0, duration: 1, ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" }
-        }
-      );
-    });
   </script>
 </body>
 </html>
-  
