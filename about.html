@@ -7,7 +7,9 @@
   <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -16,776 +18,332 @@
     /* ===== RESET & VARIABLES ===== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+    
     body {
-      font-family: 'Space Grotesk', sans-serif;
-      background: #1E1E1E;
-      color: #F3EFE6;
-      line-height: 1.7;
+      font-family: 'Inter', sans-serif;
+      background-color: #F5F2EC;
+      background-image:
+        linear-gradient(to right, rgba(30, 30, 30, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(30, 30, 30, 0.03) 1px, transparent 1px);
+      background-size: 33.33% 100%, 100% 200px;
+      background-position: center top;
+      color: #1E1E1E;
+      line-height: 1.6;
       overflow-x: hidden;
     }
+    
+    h1, h2, h3, h4, h5, h6, .nav-logo, .about-section h2, .contacts-title {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    
     a { text-decoration: none; color: inherit; }
-    button { font-family: inherit; border: none; background: none; }
+    button { font-family: inherit; border: none; background: none; cursor: pointer; }
 
     :root {
-      --red: #C33C20;
-      --green: #275441;
-      --green-light: #4A8E70; /* Світліший зелений для ховерів */
+      --red: #C33C20; 
+      --accent-green: #8CA888;
       --dark: #1E1E1E;
       --cream: #F3EFE6;
-      --cream-light: #F2EEE6;
       --white: #FBFAFA;
+      --bg-light: #F5F2EC;
+      --line: rgba(30, 30, 30, 0.12);
     }
 
-    /* ===== PROGRESS BAR ===== */
-    .progress-container {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 4px;
-      z-index: 9999;
-      background: transparent;
-    }
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background-color: var(--red);
-      transition: width 0.1s ease-out, background-color 0.3s ease;
-    }
+    .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; background: transparent; }
+    .progress-bar { height: 100%; width: 0%; background-color: var(--red); transition: width 0.1s ease-out; }
 
     /* ===== NAVBAR ===== */
-    .navbar {
-      position: fixed;
-      top: 2rem;
-      left: 0; right: 0;
-      z-index: 50;
-      display: flex;
-      justify-content: center;
-      padding: 0 2rem;
-      pointer-events: none;
-    }
-    
+    .navbar { position: fixed; top: 1.5rem; left: 0; right: 0; z-index: 50; display: flex; justify-content: center; padding: 0 2rem; pointer-events: none; }
     .navbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 1400px;
-      padding: 1rem 2.5rem;
-      border-radius: 9999px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; max-width: 1100px; padding: 0.85rem 1.75rem;
+      border-radius: 9999px; backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
       border: 1px solid rgba(243, 239, 230, 0.1);
-      background: rgba(30, 30, 30, 0.6);
-      pointer-events: auto;
+      background: rgba(30, 30, 30, 0.72); pointer-events: auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
     }
-    
-    .nav-logo {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--cream);
-      transition: color 0.3s;
-      z-index: 2;
-    }
-    .nav-logo:hover { color: var(--green-light); }
-    
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 2.5rem;
-    }
-    
-    .nav-link {
-      position: relative;
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--cream);
-      transition: color 0.3s;
-      z-index: 2;
-    }
-    .nav-link:hover,
-    .nav-link.active { color: var(--green-light); }
+    .nav-logo { font-size: 0.95rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); transition: color 0.3s; }
+    .nav-logo:hover { color: var(--accent-green); }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-link { font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--cream); transition: color 0.3s; white-space: nowrap; }
+    .nav-link:hover, .nav-link.active { color: var(--accent-green); }
 
-    /* Мобільна навігація */
-    .mobile-nav {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 50;
-      padding: 1rem 1.5rem;
-      background: rgba(30, 30, 30, 0.8);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(243, 239, 230, 0.1);
-      align-items: center;
-      justify-content: space-between;
-    }
-    
-    .mobile-logo, .mobile-contact {
-      font-size: 0.95rem; 
-      font-weight: 600;
-      color: var(--cream);
-      text-transform: uppercase;
-      transition: color 0.3s;
-    }
-    .mobile-logo:hover, .mobile-contact:hover { color: var(--green-light); }
-    
-    .mobile-nav-right {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-    
-    .burger {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-    }
-    .burger span {
-      display: block;
-      width: 24px; height: 2px;
-      background: var(--cream);
-      transition: all 0.3s;
-    }
+    .mobile-nav { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 0.85rem 1.5rem; background: rgba(30, 30, 30, 0.8); backdrop-filter: blur(14px) saturate(140%); border-bottom: 1px solid var(--line); align-items: center; justify-content: space-between; }
+    .mobile-logo, .mobile-contact { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.05em; color: var(--cream); text-transform: uppercase; transition: color 0.3s; }
+    .mobile-nav-right { display: flex; align-items: center; gap: 1.25rem; }
+    .burger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
+    .burger span { display: block; width: 22px; height: 2px; background: var(--cream); transition: all 0.3s; }
     .burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .burger.active span:nth-child(2) { opacity: 0; }
     .burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-    .mobile-menu {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      padding: 5rem 1.5rem 2rem;
-      background: rgba(30, 30, 30, 0.95);
-      backdrop-filter: blur(15px);
-      z-index: 45;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease-in-out;
-    }
-    .mobile-menu.active {
-      transform: translateY(0);
-    }
-    .mobile-menu a {
-      font-size: 1.1rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--cream);
-      transition: color 0.3s;
-    }
-    .mobile-menu a:hover { color: var(--green-light); }
-
-    @media (max-width: 768px) {
-      .navbar { display: none; }
-      .mobile-nav { display: flex; }
-    }
+    .mobile-menu { position: fixed; top: 0; left: 0; right: 0; padding: 5rem 1.5rem 2rem; background: rgba(30, 30, 30, 0.98); backdrop-filter: blur(15px); z-index: 45; display: flex; flex-direction: column; gap: 1.25rem; transform: translateY(-100%); transition: transform 0.3s ease-in-out; }
+    .mobile-menu.active { transform: translateY(0); }
+    .mobile-menu a { font-size: 1.05rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cream); }
+    @media (max-width: 768px) { .navbar { display: none; } .mobile-nav { display: flex; } }
 
     /* ===== ABOUT PAGE LAYOUT ===== */
-    .about-wrapper {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 0 1.5rem 4rem;
-    }
-    .about-wrapper--wide {
-      padding: 14rem 1.5rem 3rem;
-    }
+    .about-page { width: 100%; padding: 11rem 2rem 5rem; position: relative; }
+    .about-intro-layout { width: min(100%, 760px); margin: 0 auto; }
 
-    /* Hero (Десктопна версія залишається як була) */
-    .about-hero {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 3rem;
-      align-items: center;
-    }
-    @media (min-width: 900px) {
-      .about-hero { grid-template-columns: minmax(0, 1fr) 200px; gap: 3rem; }
-    }
-    .about-lead {
-      font-size: clamp(1.25rem, 2vw, 1.55rem);
-      color: #d0d0d8;
-      line-height: 1.6;
-      font-weight: 500;
-    }
+    .about-heading { margin-bottom: 2rem; }
+    .about-eyebrow { font-size: clamp(1.35rem, 2.4vw, 1.8rem); line-height: 1.25; font-weight: 500; color: rgba(30, 30, 30, 0.72); margin-bottom: 0.25rem; }
+    .about-heading h1 { font-size: clamp(2rem, 4vw, 2.8rem); line-height: 1.1; letter-spacing: -0.03em; font-weight: 700; color: var(--dark); }
 
-    .about-body {
-      text-align: left;
-      margin: 0 0 1rem;
-    }
-    .about-body p {
-      font-size: 1.05rem;
-      color: #d0d0d8;
-      line-height: 1.8;
-      margin-bottom: 1.15rem;
-    }
+    .about-lead { font-size: 1.12rem; line-height: 1.65; font-weight: 400; color: rgba(30, 30, 30, 0.92); margin: 0 0 2.5rem; max-width: 680px; }
 
-    /* Hero Shape (Коло) */
-    .about-shapes {
+    .about-content { width: min(100%, 900px); margin: 5.5rem auto 0; }
+
+    /* ===== CAREER TIMELINE ===== */
+    .career-timeline {
+      padding-top: 2rem;
+      margin-top: 3rem;
       position: relative;
-      width: 380px;
-      max-width: 100%;
-      height: 340px;
-      justify-self: start;
-    }
-    @media (min-width: 900px) {
-      .about-shapes { margin-right: -180px; }
-    }
-    .shape-photo {
-      position: absolute;
-      overflow: hidden;
-      background: #2E2A28;
-      transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-    }
-    .shape-photo img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .shape-circle {
-      left: 40px; top: 20px;
-      width: 300px; height: 300px;
-      border-radius: 50%;
-    }
-    .shape-circle:hover { transform: scale(1.04); }
-
-    /* Середній блок (Десктопна версія залишається як була) */
-    .about-middle {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 2rem;
-      align-items: center;
-    }
-    @media (min-width: 900px) {
-      .about-middle { grid-template-columns: 200px minmax(0, 1fr); gap: 3rem; }
-    }
-    .about-figure {
-      position: relative;
-      width: 380px;
-      max-width: 100%;
-      height: 360px;
-    }
-    @media (min-width: 900px) {
-      .about-figure { margin-left: -180px; }
-    }
-    
-    /* Анімація обертання за годинниковою стрілкою (дуже повільно) */
-    .figure-rot {
-      position: absolute;
-      left: 65px; top: 25px;
-      width: 250px;
-      transform: rotate(-23deg);
-      transform-origin: 125px 125px;
-      transition: transform 10s linear;
-    }
-    .figure-rot:hover { 
-      transform: rotate(337deg);
-    }
-    .figure-rot .shape-square {
-      position: relative;
-      width: 250px; height: 250px;
-    }
-    
-    /* Підпис */
-    .figure-rot figcaption {
-      margin-top: 0.7rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      color: rgba(243, 239, 230, 0.6);
-    }
-    
-    @media (max-width: 640px) {
-      .about-shapes { height: 300px; }
-      .shape-circle { left: 40px; top: 10px; width: 260px; height: 260px; }
-      .about-figure { height: 340px; }
-    }
-
-    /* Кнопка Back to the top — як link-btn на головній */
-    .back-to-top-wrap {
-      display: flex;
-      justify-content: center;
-      margin-top: 6rem;
-    }
-    @media (max-width: 768px) { .back-to-top-wrap { margin-top: 3rem; } }
-    .back-to-top {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 1.25rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--cream);
-      padding-bottom: 0.75rem;
-      border-bottom: 3px solid var(--cream);
-      transition: color 0.3s, border-color 0.3s;
-    }
-    .back-to-top .icon { font-size: 1.5rem; transition: transform 0.3s; }
-    .back-to-top:hover { color: var(--green-light); border-color: var(--green-light); }
-    .back-to-top:hover .icon { transform: translate(4px, -4px); }
-
-    .about-photo {
       width: 100%;
-      aspect-ratio: 16 / 10;
-      overflow: hidden;
-      background: #14141e;
-      margin-bottom: 2.5rem;
-      border: 1px solid rgba(243, 239, 230, 0.1);
     }
-    .about-photo img {
+
+    .career-timeline h2 {
+      font-size: clamp(1.8rem, 3vw, 2.25rem);
+      color: var(--dark);
+      margin-bottom: 2rem;
+    }
+
+    /* The desktop timeline stays inside the same 900px content column as Hobbies. */
+    .timeline-road-wrap {
+      position: relative;
+      width: 100%;
+      height: 570px;
+      margin: 0 auto;
+      isolation: isolate;
+    }
+
+    .timeline-road-svg {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      object-position: center 30%;
+      z-index: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .timeline-road-svg .timeline-axis,
+    .timeline-road-svg .timeline-stem {
+      fill: none;
+      stroke: rgba(30, 30, 30, 0.28);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .timeline-road-svg .timeline-axis {
+      stroke-dasharray: 8 10;
+    }
+
+    .timeline-road-svg .timeline-road-dot-halo {
+      fill: none;
+      stroke: rgba(195, 60, 32, 0.18);
+      stroke-width: 10;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .timeline-road-svg .timeline-road-dot {
+      fill: var(--red);
+      stroke: var(--bg-light);
+      stroke-width: 4;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .timeline-road-item {
+      position: absolute;
+      z-index: 1;
       display: block;
-      transition: transform 0.5s;
-    }
-    .about-photo:hover img {
-      transform: scale(1.02);
-    }
-
-    .about-intro h1 {
-      font-size: clamp(2.5rem, 5vw, 3.5rem);
-      font-weight: 700;
-      line-height: 1.1;
-      color: var(--cream-light);
-      margin-bottom: 1.5rem;
-      letter-spacing: -0.03em;
-    }
-    .about-intro p {
-      font-size: 1.05rem;
-      color: #d0d0d8;
-      margin-bottom: 1.15rem;
-      line-height: 1.8;
-    }
-    .about-intro strong {
-      color: var(--cream-light);
-      font-weight: 600;
+      width: 18%;
+      max-width: 170px;
+      transform: translateX(-50%);
     }
 
-    /* Inline text links */
-    .text-link {
-      font-weight: 600;
-      color: var(--cream-light);
-      transition: color 0.25s;
-      cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 4px;
-    }
-    .text-link:hover {
-      color: var(--green-light); /* Зелений ховер */
-    }
+    .timeline-road-item > .timeline-road-node { display: none; }
 
-    /* ---- SECTIONS (Experience / Education / Hobbies) ---- */
-    .about-section {
-      padding-top: 3rem;
-      margin-top: 3rem;
-      border-top: 1px solid rgba(243, 239, 230, 0.15);
-    }
-    .about-section h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--cream-light);
-      margin-bottom: 1.75rem;
-      letter-spacing: -0.01em;
-    }
-    .about-section p {
-      font-size: 1.05rem;
-      color: #d0d0d8;
-      line-height: 1.8;
-      margin-bottom: 1rem;
-    }
-
-    /* Timeline rows */
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-    .timeline-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.15rem;
-      padding: 0.75rem 0;
-      transition: all 0.25s;
+    .timeline-road-content {
       position: relative;
-    }
-    @media (min-width: 640px) {
-      .timeline-row {
-        grid-template-columns: 120px 1fr;
-        gap: 1.5rem;
-        align-items: baseline;
-      }
-    }
-    .timeline-row:hover {
-      transform: translateX(4px);
-    }
-    .timeline-row:hover .timeline-main {
-      color: var(--cream-light);
-    }
-    .timeline-date {
-      font-size: 0.85rem;
-      color: #8a8a92;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.01em;
-    }
-    .timeline-main {
-      font-size: 1.05rem;
-      color: #d0d0d8;
-      transition: color 0.25s;
-      line-height: 1.5;
-    }
-    .timeline-main strong {
-      color: var(--cream-light);
-      font-weight: 600;
+      z-index: 1;
+      padding: 0;
+      background: transparent;
+      text-shadow: none;
     }
 
-    /* TIMELINE LINK STYLE */
-    .link-accent {
-      cursor: pointer;
-      color: var(--cream-light);
-      transition: color 0.25s;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      text-decoration-color: rgba(243, 239, 230, 0.3);
+    .timeline-road-year {
+      margin-bottom: 0.2rem;
+      color: rgba(30, 30, 30, 0.5);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
-    .link-accent .ext-icon {
-      display: inline-block;
-      font-size: 0.85em;
-      color: var(--cream-light);
-      margin-left: 0.25em;
-      opacity: 0;
-      transform: translateX(-2px);
-      transition: opacity 0.25s, transform 0.25s, color 0.25s;
-      vertical-align: 0.05em;
-      line-height: 1;
+
+    .timeline-road-title {
+      margin-bottom: 0.3rem;
+      color: var(--dark);
+      font-size: 1.02rem;
+      font-weight: 600;
+      line-height: 1.3;
     }
-    .link-accent:hover {
-      color: var(--green-light);
-      text-decoration-color: var(--green-light);
+
+    .timeline-road-desc {
+      color: rgba(30, 30, 30, 0.7);
+      font-size: 0.92rem;
+      line-height: 1.45;
     }
-    .link-accent:hover .ext-icon {
-      opacity: 1;
-      transform: translateX(0);
-      color: var(--green-light);
-    }
+
+    /* Alternating milestones, like the supplied reference. */
+    .tl-item-1 { top: 1.5rem; left: 3.9%; transform: none; }
+    .tl-item-2 { top: 24.5rem; left: 22.3%; }
+    .tl-item-3 { top: 1.5rem; left: 40.8%; }
+    .tl-item-4 { top: 24.5rem; left: 59.2%; }
+    .tl-item-5 { top: 1.5rem; left: 77.7%; }
+    .tl-item-6 { top: 24.5rem; left: 96.1%; transform: translateX(-100%); }
+
+    .timeline-road-item.link-right { text-align: left; }
 
     .timeline-link {
-      cursor: pointer;
-      text-decoration: none;
+      color: var(--dark);
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      text-underline-offset: 3px;
+      transition: color 0.3s, text-decoration-color 0.3s;
     }
 
-    /* ===== ABOUT — PHOTOS GRID ===== */
-    .about-photos-section {
-      margin-top: 2rem; 
+    .timeline-link:hover {
+      color: var(--accent-green);
+      text-decoration-color: var(--accent-green);
     }
 
-    .about-photos {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
-
-    .about-photo-small {
-      aspect-ratio: 4/5; 
-      overflow: hidden;
-      background: #14141e;
-      border: 1px solid rgba(243, 239, 230, 0.1);
-    }
-
-    .about-photo-small img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.5s;
-    }
-    .about-photo-small:hover img {
-      transform: scale(1.05);
-    }
-
-    /* Мобільна версія: 1 фото в ряд */
-    @media (max-width: 768px) {
-      .about-photos {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
+    /* Preserve the existing vertical mobile timeline. */
+    @media (max-width: 900px) {
+      .timeline-road-wrap {
+        width: 100%;
+        height: auto;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
       }
+
+      .timeline-road-svg { display: none; }
+
+      .timeline-road-wrap::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 7px;
+        width: 2px;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(30, 30, 30, 0.2) 0,
+          rgba(30, 30, 30, 0.2) 6px,
+          transparent 6px,
+          transparent 12px
+        );
+        z-index: 0;
+      }
+
+      .timeline-road-item {
+        position: relative;
+        display: flex;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: 100%;
+        max-width: none;
+        transform: none !important;
+        flex-direction: row !important;
+        text-align: left !important;
+      }
+
+      .timeline-road-item > .timeline-road-node {
+        display: block;
+        z-index: 2;
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
+        margin: 4px 1rem 0 0;
+        border-radius: 50%;
+        background: var(--red);
+        border: 2px solid var(--bg-light);
+        box-shadow: 0 0 0 3px rgba(195, 60, 32, 0.15);
+      }
+
+      .timeline-road-content { text-shadow: none; }
     }
+
+    @media (min-width: 901px) and (max-width: 1100px) {
+      .timeline-road-item { width: 18%; }
+      .timeline-road-title { font-size: 0.98rem; }
+      .timeline-road-desc { font-size: 0.88rem; }
+    }
+
+    /* ===== HOBBIES & PHOTOS ===== */
+    .about-section { padding-top: 3rem; margin-top: 3rem; border-top: 1px solid var(--line); }
+    .about-section h2 { font-size: clamp(1.8rem, 3vw, 2.25rem); color: var(--dark); margin-bottom: 1.5rem; }
+    .about-section p { font-size: 1.12rem; line-height: 1.8; color: rgba(30, 30, 30, 0.84); margin-bottom: 1.2rem; }
+
+    .about-photos-section { margin-top: 4rem; }
+    .about-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .about-photo-small { aspect-ratio: 4/5; overflow: hidden; background: #dedbd4; border: 1px solid rgba(30, 30, 30, 0.1); }
+    .about-photo-small img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
+    .about-photo-small:hover img { transform: scale(1.05); }
+    @media (max-width: 768px) { .about-photos { grid-template-columns: 1fr; gap: 1.5rem; } }
+
+    /* ===== BUTTONS ===== */
+    .btn-outline {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 1rem 2rem; border-radius: 9999px; border: 1px solid var(--dark);
+      background: transparent; color: var(--dark); transition: all 0.3s;
+    }
+    .btn-outline:hover { background: var(--dark); color: var(--cream); transform: translateY(-2px); }
+    .btn-outline .icon { transition: transform 0.3s; }
+    .btn-outline:hover .icon { transform: translate(3px, -3px); }
+    .back-to-top-wrap { display: flex; justify-content: center; margin-top: 4rem; }
 
     /* ===== CONTACTS ===== */
-    .contacts-wrapper {
-      background: var(--dark);
-      padding: 6rem 4rem 2rem;
-      border-top: 1px solid rgba(243, 239, 230, 0.1);
-    }
-    @media (max-width: 768px) { .contacts-wrapper { padding: 4rem 1.5rem 2rem; } }
-    
-    .contacts-inner { max-width: 1200px; margin: 0 auto; }
-
-    .contacts-title {
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 700;
-      color: var(--cream);
-      margin-bottom: 3rem;
-    }
-
-    .contacts-top {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      margin-bottom: 4rem;
-    }
-    @media (min-width: 768px) {
-      .contacts-top { flex-direction: row; justify-content: space-between; align-items: center; }
-    }
-
-    .email-container {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .email-link {
-      font-size: clamp(1.25rem, 2vw, 1.75rem);
-      font-weight: 500;
-      text-decoration: underline;
-      text-underline-offset: 4px;
-      transition: color 0.3s;
-    }
-    .email-link:hover { color: var(--green-light); }
-
-    .copy-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px; height: 40px;
-      border-radius: 4px;
-      border: 1px solid rgba(243, 239, 230, 0.2);
-      color: var(--cream);
-      transition: all 0.3s;
-    }
-    .copy-btn:hover { background: var(--green); border-color: var(--green); color: var(--white); }
+    .contacts-wrapper { background: #F5F2EC; padding: 6rem 2rem 3rem; border-top: 1px solid var(--line); }
+    .contacts-inner { max-width: 1100px; margin: 0 auto; }
+    .contacts-title { font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 700; color: var(--dark); margin-bottom: 3rem; letter-spacing: -0.02em; }
+    .contacts-top { display: flex; flex-direction: column; gap: 2rem; margin-bottom: 4rem; }
+    @media (min-width: 768px) { .contacts-top { flex-direction: row; justify-content: space-between; align-items: center; } }
+    .email-container { display: flex; align-items: center; gap: 1rem; }
+    .email-link { font-size: clamp(1.25rem, 2vw, 1.6rem); font-weight: 500; text-decoration: underline; text-underline-offset: 4px; color: var(--dark); transition: color 0.3s; }
+    .email-link:hover { color: var(--accent-green); }
+    .copy-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 9999px; border: 1px solid rgba(30, 30, 30, 0.2); color: var(--dark); transition: all 0.3s; }
+    .copy-btn:hover { background: var(--dark); border-color: var(--dark); color: var(--cream); }
     .copy-btn svg { width: 20px; height: 20px; }
+    .footer-thanks { font-size: 1rem; opacity: 0.75; color: var(--dark); }
+    .contacts-middle { display: flex; flex-direction: column; gap: 2rem; margin-bottom: 4rem; }
+    @media (min-width: 768px) { .contacts-middle { flex-direction: row; justify-content: space-between; align-items: center; } }
+    .socials { display: flex; flex-wrap: wrap; gap: 2rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; color: var(--dark); }
+    .socials a:hover { color: var(--accent-green); }
+    .status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--dark); }
+    .status .dot { width: 8px; height: 8px; background: #3DA875; border-radius: 50%; animation: blinkGreen 1.5s infinite; }
+    @keyframes blinkGreen { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    .contacts-bottom { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 1rem; font-size: 0.85rem; color: rgba(30, 30, 30, 0.5); }
+    @media (min-width: 768px) { .contacts-bottom { flex-direction: row; justify-content: space-between; } }
 
-    .footer-thanks {
-      font-size: clamp(1rem, 1.5vw, 1.2rem);
-      font-weight: 400;
-    }
-
-    .contacts-middle {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      margin-bottom: 4rem;
-    }
-    @media (min-width: 768px) {
-      .contacts-middle { flex-direction: row; justify-content: space-between; align-items: center; }
-    }
-
-    .socials {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-weight: 500;
-    }
-    .socials a:hover { color: var(--green-light); }
-    
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    .status .dot {
-      width: 8px;
-      height: 8px;
-      background: #3DA875;
-      border-radius: 50%;
-      animation: blinkGreen 1.5s infinite;
-    }
-    @keyframes blinkGreen {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.2; }
-    }
-
-    .contacts-bottom {
-      margin-top: 4rem;
-      padding-top: 2rem;
-      border-top: 1px solid rgba(243, 239, 230, 0.1);
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      font-size: 0.85rem;
-      color: rgba(243, 239, 230, 0.5);
-    }
-    @media (min-width: 768px) {
-      .contacts-bottom { flex-direction: row; justify-content: space-between; }
-    }
-
-    /* ===== АНІМАЦІЇ ===== */
-    .fade-in-up {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-
-    /* ===== МОБІЛЬНІ ПОКРАЩЕННЯ ===== */
+    .fade-in-up { opacity: 0; transform: translateY(40px); }
     @media (max-width: 768px) {
-      .about-wrapper--wide {
-        padding: 7rem 1.5rem 2rem;
-      }
-
-      /* Мобільна структура першого блоку */
-      .about-hero {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-
-      /* 1. Заголовок */
-      .about-intro h1 {
-        font-size: clamp(2rem, 8vw, 2.6rem);
-        margin-bottom: 0;
-        line-height: 1.15;
-      }
-
-      /* 2. Текст "Originally from..." */
-      .about-lead {
-        font-size: 1.05rem;
-        line-height: 1.7;
-      }
-
-      /* 3. Кругле фото (1) */
-      .about-shapes {
-        width: 100%;
-        height: auto;
-        display: flex;
-        justify-content: flex-start;
-        margin: 0.5rem 0;
-      }
-
-      .shape-photo.shape-circle {
-        position: relative;
-        left: 0;
-        top: 0;
-        width: 100%;
-        max-width: 340px;
-        height: auto;
-        aspect-ratio: 1/1;
-        border-radius: 50%;
-      }
-
-      /* 4. Основний текст і квадратне фото (2) */
-      .about-middle {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-      }
-
-      .about-body p {
-        font-size: 1rem;
-        margin-bottom: 1.25rem;
-      }
-
-      /* 5. Квадратне фото (2) в самому кінці блоку */
-      .about-figure {
-        width: 100%;
-        height: auto;
-        display: flex;
-        justify-content: flex-start;
-        margin: 1rem 0 0 0;
-        order: 1; 
-      }
-
-      .figure-rot {
-        position: relative;
-        left: 0;
-        top: 0;
-        width: 100%;
-        max-width: 340px;
-        transform: rotate(-5deg);
-        transform-origin: center center;
-      }
-
-      .figure-rot .shape-square {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 1/1;
-      }
-
-      .figure-rot figcaption {
-        margin-top: 0.75rem;
-        font-size: 0.85rem;
-      }
-
-      /* Секції */
-      .about-section {
-        padding-top: 2rem;
-        margin-top: 2rem;
-      }
-
-      .about-section h2 {
-        font-size: 1.35rem;
-        margin-bottom: 1.25rem;
-      }
-
-      .about-section p {
-        font-size: 1rem;
-      }
-
-      /* Timeline на мобільному */
-      .timeline-row {
-        grid-template-columns: 1fr;
-        gap: 0.25rem;
-        padding: 0.85rem 0;
-        border-bottom: 1px solid rgba(243, 239, 230, 0.07);
-      }
-      .timeline-row:last-child {
-        border-bottom: none;
-      }
-      .timeline-date {
-        font-size: 0.8rem;
-      }
-      .timeline-main {
-        font-size: 1rem;
-      }
-
-      /* Фото в галереї */
-      .about-photos {
-        gap: 2rem;
-      }
-      .about-photo-small {
-        aspect-ratio: 4/5;
-        width: 100%;
-      }
-
-      /* Кнопка Back to the top */
-      .back-to-top-wrap {
-        margin-top: 3rem;
-      }
-      .back-to-top {
-        font-size: 1rem;
-      }
-      .back-to-top .icon {
-        font-size: 1.25rem;
-      }
+      .about-page { padding: 7.5rem 1.5rem 3rem; }
+      .about-heading h1 { font-size: clamp(2rem, 8vw, 2.5rem); }
+      .about-content { margin-top: 4rem; }
+      .contacts-wrapper { padding-left: 1.5rem; padding-right: 1.5rem; }
     }
   </style>
 </head>
 <body>
 
-  <div class="progress-container">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
 
-  <!-- DESKTOP NAV -->
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="nav-logo">ILONA SEREDA</a>
@@ -797,214 +355,172 @@
     </div>
   </nav>
 
-  <!-- MOBILE NAV -->
   <nav class="mobile-nav">
     <a href="index.html" class="mobile-logo">ILONA SEREDA</a>
     <div class="mobile-nav-right">
       <a href="#contact" class="mobile-contact">Contact me</a>
-      <div class="burger" id="burgerBtn">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+      <div class="burger" id="burgerBtn"><span></span><span></span><span></span></div>
     </div>
   </nav>
 
-  <!-- MOBILE MENU (Без дублювання Contact me) -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="index.html#work" class="mobile-nav-link">Projects</a>
     <a href="index.html#about" class="mobile-nav-link">About</a>
   </div>
 
-  <!-- ===== ABOUT ===== -->
-  <div class="about-wrapper about-wrapper--wide">
-    <!-- HERO (Десктоп: заголовок і текст зліва, фото справа) -->
-    <section class="about-hero fade-in-up">
-      <div class="about-intro">
-        <h1>Hi, I'm Ilona, a Product and UX/UI Designer</h1>
-        <p class="about-lead">Originally from Ukraine (Dnipro, Korsun-Shevchenkivskyi, Kyiv), I lived in Montreal, Canada (Oui, je parle français), and now I live in Portugal (Estou a aprender português).</p>
-      </div>
-      <div class="about-shapes">
-        <div class="shape-photo shape-circle">
-          <img src="images/about/photo.jpg" alt="Ilona Sereda" />
-        </div>
-      </div>
-    </section>
-  </div>
+  <main class="about-page">
+    
+    <!-- ===== INTRO ===== -->
+    <div class="about-intro-layout fade-in-up">
+      <header class="about-heading">
+        <p class="about-eyebrow">Hi, I'm Ilona,</p>
+        <h1>a Product Designer</h1>
+      </header>
 
-  <article class="about-wrapper">
-
-    <!-- INTRO TEXT (Десктоп: фото зліва, текст справа) -->
-    <section class="about-middle fade-in-up">
-      <figure class="about-figure">
-        <div class="figure-rot">
-          <div class="shape-photo shape-square">
-            <img src="images/about/little-me.jpg" alt="" onerror="this.style.display='none'" />
-          </div>
-          <figcaption>Little me and my baby brother ✨</figcaption>
-        </div>
-      </figure>
-      <div class="about-body">
-      <p>Currently I'm building AI-powered wellness app <a href="https://fementity.ca/" target="_blank" rel="noopener" class="text-link">FemEntity</a>. In my work, I'm focusing on bridging the gap between user and business, while facilitating efficient workflows and cross-team collaboration.</p>
-      <p>I work remotely from Portugal (UTC+0) and collaborate comfortably across European and Eastern Time (ET) time zones.</p>
-      <p>I have hands-on experience across end-to-end design processes, from research and problem framing to redesign initiatives and design system development.</p>
-      <p>Always open to meaningful collaborations — <a href="https://www.linkedin.com/in/ilonasereda/" target="_blank" rel="noopener" class="text-link">let's connect on Linkedin</a>!</p>
-      </div>
-    </section>
-
-    <!-- EXPERIENCE -->
-    <section class="about-section fade-in-up">
-      <h2>Experience</h2>
-      <div class="timeline">
-        <div class="timeline-row">
-          <div class="timeline-date">2025 — Now</div>
-          <div class="timeline-main"><strong>Product Designer</strong> at <a href="https://fementity.ca/" target="_blank" rel="noopener" class="link-accent">FemEntity<span class="ext-icon" aria-hidden="true">↗</span></a></div>
-        </div>
-        <div class="timeline-row">
-          <div class="timeline-date">2023 — Now</div>
-          <div class="timeline-main"><strong>Freelance</strong> Consulting and Independent Projects</div>
-        </div>
-        <div class="timeline-row">
-          <div class="timeline-date">2022 — 2023</div>
-          <div class="timeline-main"><strong>UX/UI Designer</strong> at <a href="http://tsimagine.com/" target="_blank" rel="noopener" class="link-accent">TS Imagine<span class="ext-icon" aria-hidden="true">↗</span></a></div>
-        </div>
-        <div class="timeline-row">
-          <div class="timeline-date">2021 — 2022</div>
-          <div class="timeline-main"><strong>UX/UI Designer</strong> at <a href="https://www.codebridge.tech/" target="_blank" rel="noopener" class="link-accent">Codebridge<span class="ext-icon" aria-hidden="true">↗</span></a></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- EDUCATION -->
-    <section class="about-section fade-in-up">
-      <h2>Education</h2>
-      <div class="timeline">
-
-        <a href="https://ixdf.org/members/ilona-3/certificate/course/a6003fce-a121-4bba-be47-0d3ac9f69b18" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
-          <div class="timeline-date">2026</div>
-          <div class="timeline-main">
-            <strong>Interaction Design Foundation</strong> — AI for Designers
-            <span class="ext-icon" aria-hidden="true">↗</span>
-          </div>
-        </a>
-
-        <a href="https://ixdf.org/members/ilona-3/certificate/course/4f0e9a57-d736-4397-86f9-3d472498dbd7" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
-          <div class="timeline-date">2026</div>
-          <div class="timeline-main">
-            <strong>Interaction Design Foundation</strong> — Accessibility: How to Design for All
-            <span class="ext-icon" aria-hidden="true">↗</span>
-          </div>
-        </a>
-
-        <a href="https://ixdf.org/members/ilona-3/certificate/course/5c058bd5-6ce5-4319-a266-42ef9fa4ae33" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
-          <div class="timeline-date">2024</div>
-          <div class="timeline-main">
-            <strong>Interaction Design Foundation</strong> — User Research: Methods and Best Practices
-            <span class="ext-icon" aria-hidden="true">↗</span>
-          </div>
-        </a>
-
-        <a href="https://ixdf.org/members/ilona-3/certificate/course/e7f00575-cf81-4ea5-b1e1-343607d47f91" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
-          <div class="timeline-date">2024</div>
-          <div class="timeline-main">
-            <strong>Interaction Design Foundation</strong> — Design for a Better World with Don Norman
-            <span class="ext-icon" aria-hidden="true">↗</span>
-          </div>
-        </a>
-
-        <a href="https://www.coursera.org/account/accomplishments/certificate/V6EVKA8A3UFU" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
-          <div class="timeline-date">2022</div>
-          <div class="timeline-main">
-            <strong>Google</strong> through Coursera — Foundations of UX Design
-            <span class="ext-icon" aria-hidden="true">↗</span>
-          </div>
-        </a>
-
-        <a href="https://lms.beetroot.academy/diploma/ckfcef6km9ca50736ub7uiij6" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
-          <div class="timeline-date">2021</div>
-          <div class="timeline-main">
-            <strong>Beetroot Academy</strong> — UX/UI Design
-            <span class="ext-icon" aria-hidden="true">↗</span>
-          </div>
-        </a>
-
-        <a href="https://www.linkedin.com/school/kyiv-mohyla-academy/" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
-          <div class="timeline-date">2018 — 2020</div>
-          <div class="timeline-main">
-            <strong>National University of Kyiv-Mohyla Academy</strong> — MA in Literary and Comparative Studies
-            <span class="ext-icon" aria-hidden="true">↗</span>
-          </div>
-        </a>
-
-        <a href="https://knu.ua/en/" target="_blank" rel="noopener" class="timeline-row timeline-link link-accent">
-          <div class="timeline-date">2014 — 2018</div>
-          <div class="timeline-main">
-            <strong>Taras Shevchenko National University of Kyiv</strong> — BA in Literature
-            <span class="ext-icon" aria-hidden="true">↗</span>
-          </div>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- HOBBIES -->
-    <section class="about-section fade-in-up">
-      <h2>Hobbies &amp; Interests</h2>
-      <p>In my spare time, I enjoy exploring psychology, learning French, reading, drawing, traveling, exploring museums (favorites include Fundació Joan Miró, Centre Pompidou and the Musée des beaux-arts de Montréal), and fermenting vegetables.</p>
-    </section>
-
-    <!-- 6 PHOTOS -->
-    <section class="about-photos-section fade-in-up">
-      <div class="about-photos">
-        <div class="about-photo-small">
-          <img src="images/about/photo-1.jpg" alt="Seagull by the sea" />
-        </div>
-        <div class="about-photo-small">
-          <img src="images/about/photo-2.jpg" alt="Ilona portrait" />
-        </div>
-        <div class="about-photo-small">
-          <img src="images/about/photo-3.jpg" alt="Metropolis building" />
-        </div>
-        <div class="about-photo-small">
-          <img src="images/about/photo-4.jpg" alt="Beach and W Barcelona" />
-        </div>
-        <div class="about-photo-small">
-          <img src="images/about/photo-5.jpg" alt="Pink flowers" />
-        </div>
-        <div class="about-photo-small">
-          <img src="images/about/photo-6.jpg" alt="Orange chair" />
-        </div>
-      </div>
-    </section>
-
-    <!-- BACK TO THE TOP -->
-    <div class="back-to-top-wrap">
-      <a href="#" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
-        Back to the top
-        <span class="icon">↑</span>
-      </a>
+      <p class="about-lead">
+        Currently, I'm designing for health and wellness practitioners and their clients at FemEntity. I put people at the centre of my work, whether they're users or colleagues, while keeping efficient workflows and business needs in focus.
+      </p>
     </div>
 
-  </article>
+    <!-- ===== MAIN CONTENT ===== -->
+    <article class="about-content">
+      
+      <!-- CAREER TIMELINE (Free Road) -->
+      <section class="career-timeline fade-in-up">
+        <h2>Career Timeline</h2>
+        
+        <div class="timeline-road-wrap">
+          
+          <!-- SVG Дорога (S-подібна, вільна) -->
+          <svg class="timeline-road-svg" viewBox="0 0 900 570" preserveAspectRatio="none" aria-hidden="true">
+            <!-- A gently wavy horizontal timeline with alternating vertical connectors. -->
+            <path class="timeline-axis"
+              d="M 35 225 C 105 213, 145 235, 201 222 S 310 235, 367 224 S 480 211, 533 225 S 650 236, 699 222 S 820 214, 865 226 C 900 232, 925 218, 960 225" />
+            <path class="timeline-stem" d="
+              M 35 225 L 35 178
+              M 201 222 L 201 385
+              M 367 224 L 367 178
+              M 533 225 L 533 385
+              M 699 222 L 699 178
+              M 865 226 L 865 385" />
+            <circle class="timeline-road-dot-halo" cx="35" cy="225" r="8" />
+            <circle class="timeline-road-dot" cx="35" cy="225" r="7" />
+            <circle class="timeline-road-dot-halo" cx="201" cy="222" r="8" />
+            <circle class="timeline-road-dot" cx="201" cy="222" r="7" />
+            <circle class="timeline-road-dot-halo" cx="367" cy="224" r="8" />
+            <circle class="timeline-road-dot" cx="367" cy="224" r="7" />
+            <circle class="timeline-road-dot-halo" cx="533" cy="225" r="8" />
+            <circle class="timeline-road-dot" cx="533" cy="225" r="7" />
+            <circle class="timeline-road-dot-halo" cx="699" cy="222" r="8" />
+            <circle class="timeline-road-dot" cx="699" cy="222" r="7" />
+            <circle class="timeline-road-dot-halo" cx="865" cy="226" r="8" />
+            <circle class="timeline-road-dot" cx="865" cy="226" r="7" />
+          </svg>
+
+          <!-- 1. 2020 -->
+          <div class="timeline-road-item tl-item-1">
+            <div class="timeline-road-node"></div>
+            <div class="timeline-road-content">
+              <div class="timeline-road-year">2020</div>
+              <div class="timeline-road-title">MA in Literary and Comparative Studies</div>
+              <div class="timeline-road-desc">Freelancing as an Illustrator, Graphic and Web Designer</div>
+            </div>
+          </div>
+
+          <!-- 2. 2021 -->
+          <div class="timeline-road-item tl-item-2">
+            <div class="timeline-road-node"></div>
+            <div class="timeline-road-content">
+              <div class="timeline-road-year">2021</div>
+              <div class="timeline-road-title">6-month UX/UI Design Bootcamp</div>
+              <div class="timeline-road-desc">While taking other courses in Design Theory, Web Design etc.</div>
+            </div>
+          </div>
+
+          <!-- 3. 2021 - 2022 -->
+          <div class="timeline-road-item tl-item-3 link-right">
+            <div class="timeline-road-node"></div>
+            <div class="timeline-road-content">
+              <div class="timeline-road-year">2021 — 2022</div>
+              <div class="timeline-road-title">UX/UI Designer at <a href="https://www.codebridge.tech/" target="_blank" rel="noopener" class="timeline-link">Codebridge</a></div>
+              <div class="timeline-road-desc">First job I applied to and got my first ever offer</div>
+            </div>
+          </div>
+
+          <!-- 4. 2022 - 2023 -->
+          <div class="timeline-road-item tl-item-4 link-right">
+            <div class="timeline-road-node"></div>
+            <div class="timeline-road-content">
+              <div class="timeline-road-year">2022 — 2023</div>
+              <div class="timeline-road-title">UX/UI Designer at <a href="http://tsimagine.com/" target="_blank" rel="noopener" class="timeline-link">TS Imagine</a></div>
+              <div class="timeline-road-desc">Moved to Montreal, Canada</div>
+            </div>
+          </div>
+
+          <!-- 5. 2023 - Now -->
+          <div class="timeline-road-item tl-item-5">
+            <div class="timeline-road-node"></div>
+            <div class="timeline-road-content">
+              <div class="timeline-road-year">2023 — Now</div>
+              <div class="timeline-road-title">Freelancing and Consulting</div>
+              <div class="timeline-road-desc">Developing Independent Projects</div>
+            </div>
+          </div>
+
+          <!-- 6. 2025 - Now -->
+          <div class="timeline-road-item tl-item-6 link-right">
+            <div class="timeline-road-node"></div>
+            <div class="timeline-road-content">
+              <div class="timeline-road-year">2025 — Now</div>
+              <div class="timeline-road-title">Product Designer at <a href="https://fementity.ca/" target="_blank" rel="noopener" class="timeline-link">FemEntity</a></div>
+              <div class="timeline-road-desc">Owning design process from discovery to delivery</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- HOBBIES & INTERESTS -->
+      <section class="about-section fade-in-up">
+        <h2>Hobbies &amp; Interests</h2>
+        <p>In my spare time, I enjoy exploring psychology, learning French, reading, drawing, traveling, exploring museums (favorites include Fundació Joan Miró, Centre Pompidou and the Musée des beaux-arts de Montréal), and fermenting vegetables.</p>
+      </section>
+
+      <!-- 6 PHOTOS -->
+      <section class="about-photos-section fade-in-up">
+        <div class="about-photos">
+          <div class="about-photo-small"><img src="images/about/photo-1.jpg" alt="Seagull by the sea" /></div>
+          <div class="about-photo-small"><img src="images/about/photo-2.jpg" alt="Ilona portrait" /></div>
+          <div class="about-photo-small"><img src="images/about/photo-3.jpg" alt="Metropolis building" /></div>
+          <div class="about-photo-small"><img src="images/about/photo-4.jpg" alt="Beach and W Barcelona" /></div>
+          <div class="about-photo-small"><img src="images/about/photo-5.jpg" alt="Pink flowers" /></div>
+          <div class="about-photo-small"><img src="images/about/photo-6.jpg" alt="Orange chair" /></div>
+        </div>
+      </section>
+
+      <div class="back-to-top-wrap fade-in-up">
+        <a href="#" class="btn-outline" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
+          Back to the top
+          <span class="icon">↑</span>
+        </a>
+      </div>
+
+    </article>
+  </main>
 
   <!-- CONTACTS -->
   <section class="contacts-wrapper" id="contact">
     <div class="contacts-inner">
       <h2 class="contacts-title">Contact me</h2>
-
       <div class="contacts-top">
         <div class="email-container">
           <a href="mailto:ilonaseredawork@gmail.com" class="email-link" id="emailLink">ilonaseredawork@gmail.com</a>
           <button class="copy-btn" id="copyBtn" title="Copy email">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           </button>
         </div>
         <div class="footer-thanks">Dyakuyu (Дякую) which means "Thank you" in Ukrainian</div>
       </div>
-
       <div class="contacts-middle">
         <div class="socials">
           <a href="https://www.linkedin.com/in/ilonasereda/" target="_blank">LinkedIn</a>
@@ -1012,13 +528,8 @@
           <a href="https://dribbble.com/ilonasereda" target="_blank">Dribbble</a>
           <a href="https://ixdf.org/members/ilona-3?r=ilona-3" target="_blank">IxDF</a>
         </div>
-        
-        <div class="status">
-          <span class="dot"></span>
-          Available for projects
-        </div>
+        <div class="status"><span class="dot"></span> Available for projects</div>
       </div>
-
       <div class="contacts-bottom">
         <div>Designed and built with love by Ilona Sereda</div>
         <div>Portugal, 2026</div>
@@ -1027,9 +538,7 @@
   </section>
 
   <script>
-    // ===== PROGRESS BAR =====
     const progressBar = document.getElementById('progressBar');
-    
     window.addEventListener('scroll', () => {
       const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -1037,7 +546,6 @@
       progressBar.style.width = scrolled + "%";
     });
 
-    // ===== МОБІЛЬНЕ МЕНЮ =====
     const burgerBtn = document.getElementById('burgerBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileLinks = document.querySelectorAll('.mobile-nav-link');
@@ -1046,7 +554,6 @@
       mobileMenu.classList.toggle('active');
       burgerBtn.classList.toggle('active');
     });
-
     mobileLinks.forEach(link => {
       link.addEventListener('click', () => {
         mobileMenu.classList.remove('active');
@@ -1054,41 +561,29 @@
       });
     });
 
-    // ===== COPY EMAIL =====
     const copyBtn = document.getElementById('copyBtn');
     const emailLink = document.getElementById('emailLink');
     const emailToCopy = "ilonaseredawork@gmail.com";
-
     function copyEmail() {
       navigator.clipboard.writeText(emailToCopy).then(() => {
         const originalHTML = copyBtn.innerHTML;
         copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
         copyBtn.style.color = '#4ade80';
-        
         setTimeout(() => {
           copyBtn.innerHTML = originalHTML;
-          copyBtn.style.color = 'var(--cream)';
+          copyBtn.style.color = 'var(--dark)';
         }, 2000);
       });
     }
-
     copyBtn.addEventListener('click', copyEmail);
-    emailLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      copyEmail();
-    });
+    emailLink.addEventListener('click', (e) => { e.preventDefault(); copyEmail(); });
 
-    // ===== GSAP АНІМАЦІЇ =====
     gsap.registerPlugin(ScrollTrigger);
-
     gsap.utils.toArray(".fade-in-up").forEach(function(el) {
-      gsap.fromTo(el,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1, y: 0, duration: 1, ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" }
-        }
-      );
+      gsap.fromTo(el, { opacity: 0, y: 40 }, {
+        opacity: 1, y: 0, duration: 1, ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" }
+      });
     });
   </script>
 </body>
